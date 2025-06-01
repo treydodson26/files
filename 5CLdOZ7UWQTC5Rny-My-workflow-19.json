@@ -1,0 +1,443 @@
+{
+  "name": "My workflow 19",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $fromAI(\"url\", \"Endpoint address for the request\", \"string\", \"\") }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSlidesOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"jsonBody\", \"JSON data for the request body\", \"json\", \"{}\") }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        2680
+      ],
+      "id": "165a606f-fa0a-4847-ac20-962b6ee4e4f5",
+      "name": "GOOGLE SLIDES",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "toolDescription": "Method: In the context of n8n workflows, the Method parameter typically refers to the type of operation or action to be performed. For example, in an HTTP Request node, the Method specifies the HTTP verb (e.g., GET, POST, PUT, DELETE) to be used for the request. \n",
+        "method": "={{ $fromAI(\"method\", \"The type of operation to perform\", \"string\") }}",
+        "url": "={{ $fromAI(\"url\", \"Endpoint address for the request\", \"string\", \"\") }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"jsonBody\", \"JSON data for the request body\", \"json\", \"{}\") }}",
+        "placeholderDefinitions": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -60,
+        2720
+      ],
+      "id": "36330169-98a8-4791-8011-0cb5ec413f17",
+      "name": "GOOGLE DOCS API",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        2780
+      ],
+      "id": "aa829493-a590-4561-926f-9e92fe82cd3f",
+      "name": "GOOGLE SHEETS API",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "ROLE\nYou are the Content Manager in an n8n workflow, responsible for handling the following tasks:\n\nGoogle Docs – Create, update, and retrieve documents.\nGoogle Sheets – Create sheets, delete rows, and append or update rows.\nHTTP Requests – Communicate with Google Slides, Docs, and Sheets APIs.\nYou report to the Executive Director Agent, who provides all required field values. You do not guess or assume any values. Instead, you use $fromAI() placeholders, which the Executive Director Agent fills dynamically.\n\nFROMAI FUNCTION\nYou use the $fromAI() function to dynamically insert values into fields.\n\nFunction Syntax:\nbash\nCopy\n{{ $fromAI(\"key\", \"description\", \"type\", defaultValue) }}\nkey → Unique identifier (1-64 characters, using letters, numbers, underscores, or hyphens).\ndescription → Explains the purpose of the value.\ntype → \"string\", \"number\", \"boolean\", or \"json\".\ndefaultValue → The fallback value if AI cannot provide one (\"\", 0, false, or null).\nGOOGLE DOCS NODES\n1. Create Document\nCreates a new Google Docs document in a specified folder.\n\nField\tValue\tType\ntitle\t{{ $fromAI(\"title\", \"Document title\", \"string\", \"\") }}\tString\nfolderId\t{{ $fromAI(\"folderId\", \"Drive folder ID\", \"string\", \"\") }}\tString\n2. Update Document\nModifies an existing Google Doc, supporting text, tables, footers, headers, and more.\n\nField\tValue\tType\ndocId\t{{ $fromAI(\"docId\", \"Document ID\", \"string\", \"\") }}\tString\nobject\tFixed: “Text,” “Table,” or other supported objects\tFixed\ncontent\t{{ $fromAI(\"content\", \"Text content\", \"string\", \"\") }}\tString\nstartIndex\t{{ $fromAI(\"startIndex\", \"Start index\", \"number\", 0) }}\tNumber\nendIndex\t{{ $fromAI(\"endIndex\", \"End index\", \"number\", 0) }}\tNumber\noldText\t{{ $fromAI(\"oldText\", \"Text to replace\", \"string\", \"\") }}\tString\nnewText\t{{ $fromAI(\"newText\", \"Replacement text\", \"string\", \"\") }}\tString\n✅ Object Handling Rules\n\nFixed Values: \"Text\", \"Create\", and \"Body\" remain unchanged.\nDynamic Values: \"Content\", \"Start Index\", and \"End Index\" come from Get Document.\nNo Guessing: AI retrieves accurate placement indexes before updating.\n3. Get Document\nRetrieves a Google Docs document structure for indexing or analysis.\n\nField\tValue\tType\ndocumentId\t{{ $fromAI(\"documentId\", \"Document ID\", \"string\", \"\") }}\tString\n✅ Why Use This?\n\nProvides Start Index and End Index for updates.\nEnsures content insertion doesn’t overwrite existing data.\nGOOGLE SHEETS NODES\n1. Create Sheets\nCreates a new Google Sheets document.\n\nField\tValue\tType\ndocument\t{{ $fromAI(\"document\", \"Sheets doc ID\", \"string\", \"\") }}\tString\ntitle\t{{ $fromAI(\"title\", \"Sheet name\", \"string\", \"\") }}\tString\n2. Delete Rows\nRemoves one or more rows from a Google Sheet.\n\nField\tValue\tType\ndocument\t{{ $fromAI(\"document\", \"Sheets doc ID\", \"string\", \"\") }}\tString\nsheet\t{{ $fromAI(\"sheet\", \"Sheet name or ID\", \"string\", \"\") }}\tString\nstartRowNumber\t{{ $fromAI(\"startRowNumber\", \"Starting row number\", \"number\", 1) }}\tNumber\nrowsToDelete\t{{ $fromAI(\"rowsToDelete\", \"How many rows to delete\", \"number\", 1) }}\tNumber\n3. Append or Update Rows\nAdds new data or updates existing rows.\n\nField\tValue\tType\ndocument\t{{ $fromAI(\"document\", \"Sheets doc ID\", \"string\", \"\") }}\tString\nsheet\t{{ $fromAI(\"sheet\", \"Sheet name or ID\", \"string\", \"\") }}\tString\nrowData\t{{ $fromAI(\"rowData\", \"Data for the row\", \"json\", \"{}\") }}\tJSON\nHTTP REQUEST NODES\nFor Google APIs (Slides, Docs, Sheets), you will use HTTP Requests.\n\nField\tValue\tType\nurl\t{{ $fromAI(\"url\", \"Request endpoint\", \"string\", \"\") }}\tString\nmethod\t{{ $fromAI(\"method\", \"HTTP method like GET or POST\", \"string\", \"GET\") }}\tString\njsonBody\t{{ $fromAI(\"jsonBody\", \"JSON payload\", \"json\", \"{}\") }}\tJSON\n✅ Why Use HTTP Requests?\n\nDirect API calls for custom operations.\nSupports Google Slides modifications (text, images, shapes).\nGOOGLE SLIDES (VIA HTTP REQUESTS)\nHandles Google Slides updates using HTTP.\n\nField\tValue\tType\ndocument\t{{ $fromAI(\"document\", \"Slides doc ID\", \"string\", \"\") }}\tString\n✅ Examples of Slide Modifications\n\nInsert text\nAdd shapes or images\nFormat slides dynamically\nRULES\nDo Not Guess\n\nThe Executive Director Agent provides all values.\nIf a required value is missing, use \"\" or null as a fallback.\nMaintain Data Consistency\n\nKeep the same doc ID when updating the same document.\nEnsure values match across related nodes.\nFollow Object Handling Rules\n\nGoogle Docs: Ensure correct indexing when inserting content.\nGoogle Sheets: Prevent duplicate or misplaced rows.\nGoogle Slides: Maintain formatting consistency."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -260,
+        1900
+      ],
+      "id": "809891d2-da5f-4eb6-9a61-e4b488b82e25",
+      "name": "Content Manager"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "=",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=",
+          "mode": "id"
+        },
+        "toDelete": "=rows",
+        "startIndex": "A"
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -60,
+        2380
+      ],
+      "id": "92c196de-f43f-48bf-acbd-c8a14bdf4268",
+      "name": "Delete Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"document\", \"The ID of the Google Sheets doc\", \"string\", \"\") }}",
+          "mode": "id"
+        },
+        "title": "={{ $fromAI(\"title\", \"The name of the sheet\", \"string\", \"\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -220,
+        2440
+      ],
+      "id": "beca203d-a78c-4b2f-81fd-40c7ed08b703",
+      "name": "Create Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"document\", \"The ID of the Google Sheets doc\", \"string\", \"\") }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        80,
+        2420
+      ],
+      "id": "8a24d889-047b-42e3-a4cf-5caa21985406",
+      "name": "Append or Update Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -620,
+        1920
+      ],
+      "id": "9d6a7ac2-79f8-4c29-9812-6460735ece5f",
+      "name": "When chat message received",
+      "webhookId": "530e51fb-0d21-43d0-a330-842e41063f3e"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $fromAI(\"docId\", \"The unique identifier for the document\", \"string\", \"\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        2560
+      ],
+      "id": "cfe6b3ba-2b40-45ac-8f02-317251debaec",
+      "name": "Get Documents",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"docId\", \"The unique identifier for the document\", \"string\", \"defaultDocId\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{$fromAI(\"text\", \"The main body of the text content\", \"string\", \"\")}}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "={{ $fromAI(\"oldText\", \"The text string to be replaced\", \"string\", \"\") }}",
+              "replaceText": "={{ $fromAI(\"oldText\", \"The text string to be replaced\", \"string\", null) }}"
+            },
+            {
+              "object": "table",
+              "action": "insert",
+              "rows": "={{ $fromAI(\"rows\", \"Number of table rows required\", \"number\", 1) }}",
+              "columns": "={{ $fromAI(\"columns\", \"Number of table columns required\", \"number\", 1) }}"
+            },
+            {
+              "object": "paragraphBullets",
+              "action": "create",
+              "startIndex": "={{ $fromAI(\"startIndex\", \"Start index for bullet insertion\", \"number\", 0) }}",
+              "endIndex": "={{ $fromAI(\"endIndex\", \"End index for bullet insertion\", \"number\", 0) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        2580
+      ],
+      "id": "fde2bc2f-c7ed-4c31-accf-204ca5fffc88",
+      "name": "Update Documents",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -100,
+        2200
+      ],
+      "id": "fccd9c57-c9d9-495e-9e16-8f9ff351c730",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "={{ $fromAI('Title') }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -780,
+        2400
+      ],
+      "id": "37ec4e6f-b784-47be-b3ea-37765b346589",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        2100
+      ],
+      "id": "895b785c-6ef1-48d3-be66-aa905051e4c4",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4tt13MQfXUUinHW6",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "GOOGLE SLIDES": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GOOGLE DOCS API": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GOOGLE SHEETS API": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Rows": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or Update Row": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

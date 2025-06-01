@@ -1,0 +1,449 @@
+{
+  "name": "Update Task Manager Document",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "7d7ebf48-0849-4fd5-8bd6-7b44c3e9d9b9",
+      "name": "Telegram Trigger",
+      "webhookId": "fd74556d-a8a3-42e5-8864-95fbd59b6261",
+      "credentials": {
+        "telegramApi": {
+          "id": "gk9VU5xHjhzncxPA",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a2990f24-0637-4c2e-b4b1-e1a8698a20d2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        340
+      ],
+      "id": "78186045-7b39-46b6-8435-83cb33e9c1bb",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4tt13MQfXUUinHW6",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1NXfyCVU1s8B70ij6vXuBvsfDfl-idgZFdhbhS__yOHo",
+        "simple": false
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        40,
+        960
+      ],
+      "id": "3be6f1d2-86f1-4d4f-aa2a-31cbc10bd2e1",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -100,
+        180
+      ],
+      "id": "1859a76d-4c68-4664-bcd4-c20b11131458",
+      "name": "When chat message received",
+      "webhookId": "bb698019-fb9c-4f69-9197-2a2d189c9e09"
+    },
+    {
+      "parameters": {
+        "path": "8744c600-45d3-4add-8540-ad2c2ea9ecd4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        -220
+      ],
+      "id": "40eed55b-e284-4c36-aa23-dfc810ab4854",
+      "name": "Webhook",
+      "webhookId": "8744c600-45d3-4add-8540-ad2c2ea9ecd4"
+    },
+    {
+      "parameters": {
+        "title": "="
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        460,
+        660
+      ],
+      "id": "3ed10072-6ed6-4113-ae91-00d04bef29b8",
+      "name": "Google Docs2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "1NXfyCVU1s8B70ij6vXuBvsfDfl-idgZFdhbhS__yOHo",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "locationChoice": "location",
+              "index": "={{ $fromAI('index') }}",
+              "text": "={{$fromAI('text')  }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        740,
+        620
+      ],
+      "id": "1dab5dac-88f7-4f73-9abc-0d4de8dc1120",
+      "name": "Insert Text ",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "={{ $fromAI(\"OldText\") }}",
+              "replaceText": "={{ $fromAI(\"NewText\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        560,
+        620
+      ],
+      "id": "2a8f3849-7778-4e57-85b5-c7f3730b9f28",
+      "name": "Find and Replace Text",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"documentID\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "table",
+              "action": "insert",
+              "locationChoice": "location",
+              "index": "={{ $fromAI(\"index\") }}",
+              "rows": "={{ $fromAI(\"Rows\") }}",
+              "columns": "={{ $fromAI(\"Columns\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        260,
+        600
+      ],
+      "id": "ce72d16b-afbc-4622-b1eb-398d6eac477f",
+      "name": "Insert Table",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"documentID\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "paragraphBullets",
+              "action": "create",
+              "bulletPreset": "BULLET_CHECKBOX",
+              "startIndex": "={{ $fromAI(\"StartIndex\") }}",
+              "endIndex": "={{ $fromAI(\"EndIndex\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        520
+      ],
+      "id": "067af070-bdc8-4b58-a21f-04b689018668",
+      "name": "Insert Paragraph Bullets",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "POST https://docs.googleapis.com/v1/documents/{documentId}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{RequestBody}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "Request Body",
+              "type": "json"
+            },
+            {
+              "name": "documentID",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        560
+      ],
+      "id": "97625050-8f53-401b-9d3f-f20ca41ab94b",
+      "name": "Create Weekly Planner",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://docs.googleapis.com/v1/documents/1V_koblAT2GcvcClOEiJGsf_NiOpnK8iscwhPRCWgCx8:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"requests\": [\n    {\n      \"insertText\": {\n        \"location\": { \"index\": 1 },\n        \"text\": \"# Trey's Weekly Planner\\n\\n\"\n      }\n    },\n    {\n      \"updateParagraphStyle\": {\n        \"range\": { \"startIndex\": 1, \"endIndex\": 24 },\n        \"paragraphStyle\": { \"namedStyleType\": \"HEADING_1\" },\n        \"fields\": \"namedStyleType\"\n      }\n    },\n    {\n      \"insertText\": {\n        \"location\": { \"index\": 24 },\n        \"text\": \"### MONDAY\\n\\n\"\n      }\n    },\n    {\n      \"insertTable\": {\n        \"location\": { \"index\": 35 },\n        \"rows\": 14,\n        \"columns\": 3\n      }\n    },\n    {\n      \"updateTableCellStyle\": {\n        \"tableRange\": {\n          \"tableCellLocation\": {\n            \"tableStartLocation\": { \"index\": 35 },\n            \"rowIndex\": 0,\n            \"columnIndex\": 0\n          },\n          \"rowSpan\": 1,\n          \"columnSpan\": 3\n        },\n        \"tableCellStyle\": {\n          \"backgroundColor\": { \"color\": { \"rgbColor\": { \"red\": 0.95, \"green\": 0.95, \"blue\": 0.95 } } },\n          \"paddingBottom\": { \"magnitude\": 8, \"unit\": \"PT\" },\n          \"paddingTop\": { \"magnitude\": 8, \"unit\": \"PT\" }\n        },\n        \"fields\": \"backgroundColor,paddingBottom,paddingTop\"\n      }\n    },\n    {\n      \"updateTableColumnProperties\": {\n        \"tableStartLocation\": { \"index\": 35 },\n        \"columnIndices\": [0],\n        \"tableColumnProperties\": {\n          \"widthType\": \"FIXED_WIDTH\",\n          \"width\": { \"magnitude\": 100, \"unit\": \"PT\" }\n        },\n        \"fields\": \"widthType,width\"\n      }\n    },\n    {\n      \"updateTableColumnProperties\": {\n        \"tableStartLocation\": { \"index\": 35 },\n        \"columnIndices\": [1],\n        \"tableColumnProperties\": {\n          \"widthType\": \"FIXED_WIDTH\",\n          \"width\": { \"magnitude\": 150, \"unit\": \"PT\" }\n        },\n        \"fields\": \"widthType,width\"\n      }\n    },\n    {\n      \"updateTableColumnProperties\": {\n        \"tableStartLocation\": { \"index\": 35 },\n        \"columnIndices\": [2],\n        \"tableColumnProperties\": {\n          \"widthType\": \"FIXED_WIDTH\",\n          \"width\": { \"magnitude\": 300, \"unit\": \"PT\" }\n        },\n        \"fields\": \"widthType,width\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        560
+      ],
+      "id": "3ed369f3-ba42-44fe-91a8-cd884a99cf87",
+      "name": "HTTP Request",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "4XZOQcx379fSY8ZO",
+          "name": "Google Docs account 8"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Text ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find and Replace Text": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Table": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Paragraph Bullets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Weekly Planner": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

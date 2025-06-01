@@ -1,0 +1,363 @@
+{
+  "name": "Personal Assistant | Convert and Upload Docs",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"file_id\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -340,
+        640
+      ],
+      "id": "d7ef772b-217f-44e5-82e0-c5a670c13bea",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        640
+      ],
+      "id": "e0261530-122f-4502-a20a-0cc876814ce1",
+      "name": "Telegram",
+      "webhookId": "a584bb04-8f07-447f-9272-381f5b70ffe4"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.message.document.file_name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "12dVXMe-em5GnCBmOzP1w8ENx6TaCpWNo",
+          "mode": "list",
+          "cachedResultName": "Test Folder",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/12dVXMe-em5GnCBmOzP1w8ENx6TaCpWNo"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        100,
+        640
+      ],
+      "id": "95eca718-3fb4-46cb-b7e7-4fb8a32de1b3",
+      "name": "Google Drive"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        540,
+        640
+      ],
+      "id": "d3da1764-b66c-49d9-9407-fe8a67662fbd",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        320,
+        640
+      ],
+      "id": "278b90f4-1080-41d9-b8ee-6b6b10252138",
+      "name": "Google Drive1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot at extracting data from documents.",
+              "role": "system"
+            },
+            {
+              "content": "=Please analyze the text below and extract the following items for me: Invoice #, Quantity, Price, Tax, Subtotal, Total, Date, Description.\n\nPlease make sure the output is JSON Data.\n\nHere's the text:\n {{ $json.text }}"
+            },
+            {
+              "content": "Please structure the data in JSON format exactly like this:\n[{\n  \"invoice_number\": \"INVOICE_NUMBER_PLACEHOLDER\",\n  \"date\": \"DATE_PLACEHOLDER\",\n  \"items\": [\n    {\n      \"description\": \"DESCRIPTION_PLACEHOLDER\",\n      \"quantity\": \"QUANTITY_PLACEHOLDER\",\n      \"price\": \"PRICE_PLACEHOLDER\",\n      \"tax\": \"TAX_PLACEHOLDER\",\n      \"subtotal\": \"SUBTOTAL_PLACEHOLDER\"\n    }\n  ],\n  \"total\": \"TOTAL_PLACEHOLDER\"\n}\n]",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        760,
+        640
+      ],
+      "id": "c6a9cead-5221-48df-8576-3ee89b84e79e",
+      "name": "OpenAI"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Gjyfz4L_LOvDQsNTBIlF2SsoUNz9PvQjmikIe1zcRIQ",
+          "mode": "list",
+          "cachedResultName": "n8n Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Gjyfz4L_LOvDQsNTBIlF2SsoUNz9PvQjmikIe1zcRIQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Gjyfz4L_LOvDQsNTBIlF2SsoUNz9PvQjmikIe1zcRIQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice #": "={{ $('OpenAI').item.json.message.content.invoice_number }}",
+            "Description": "={{ $json.description }}",
+            "Qty": "={{ $json.quantity }}",
+            "Price": "={{ $json.price }}",
+            "Tax": "={{ $json.tax }}",
+            "Subtotal": "={{ $json.subtotal }}",
+            "Total": "={{ $('OpenAI').item.json.message.content.invoice.total }}",
+            "Date": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qty",
+              "displayName": "Qty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tax",
+              "displayName": "Tax",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subtotal",
+              "displayName": "Subtotal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1340,
+        640
+      ],
+      "id": "fe14842f-01f1-4c23-8bfe-6d7984250ef1",
+      "name": "Google Sheets"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        640
+      ],
+      "id": "79c0383c-5451-46aa-898b-450018559023",
+      "name": "Split Out"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "file_id": "BQACAgEAAxkBAAMoZ6-T0mSeT6IDz1TN0ZZli5OWSYUAAlMEAALwWnhFKSdut4sAAbOeNgQ"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}

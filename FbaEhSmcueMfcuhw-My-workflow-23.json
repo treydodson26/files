@@ -1,0 +1,1419 @@
+{
+  "name": "My workflow 23",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        980,
+        420
+      ],
+      "id": "12ced8d0-4970-42fa-b352-74b110bc448c",
+      "name": "Executive Director1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        680,
+        780
+      ],
+      "id": "535f98e9-673a-4ad6-8a06-0f9c3f4916a2",
+      "name": "CONTENT MANAGER"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        920,
+        760
+      ],
+      "id": "62bf82a0-2475-41c8-bb53-0da769d6ec13",
+      "name": "COMMUNICATIONS MANAGER"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        760
+      ],
+      "id": "fd696930-7528-4675-bc65-be533c1a0fb9",
+      "name": "RESEARCH MANAGER"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        760
+      ],
+      "id": "e0d333a1-5395-4a18-af94-82ed7282481d",
+      "name": "DATA ANALYSIS MANAGER"
+    },
+    {
+      "parameters": {
+        "name": "PROJECTS MANAGER"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        760
+      ],
+      "id": "6ea85f40-f8dc-4316-a07e-03a68e2813db",
+      "name": "TASKS MANAGER"
+    },
+    {
+      "parameters": {
+        "folderId": "={{ $fromAI(\"folderId\", \"The unique identifier for the folder\", \"string\") }}",
+        "title": "={{ $fromAI(\"title\", \"The name of the folder\", \"string\", \"\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        1480
+      ],
+      "id": "0a8d61c9-d147-490d-a48e-451d24b6eb2b",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $fromAI(\"docId\", \"The unique identifier for the document\", \"string\", \"\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        1560
+      ],
+      "id": "f06d01ae-c822-4567-b798-c82ff6c9754f",
+      "name": "Google Docs1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"docId\", \"The unique identifier for the document\", \"string\", \"defaultDocId\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{$fromAI(\"text\", \"The main body of the text content\", \"string\", \"\")}}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "={{ $fromAI(\"oldText\", \"The text string to be replaced\", \"string\", \"\") }}",
+              "replaceText": "={{ $fromAI(\"oldText\", \"The text string to be replaced\", \"string\", null) }}"
+            },
+            {
+              "object": "table",
+              "action": "insert",
+              "rows": "={{ $fromAI(\"rows\", \"Number of table rows required\", \"number\", 1) }}",
+              "columns": "={{ $fromAI(\"columns\", \"Number of table columns required\", \"number\", 1) }}"
+            },
+            {
+              "object": "paragraphBullets",
+              "action": "create",
+              "startIndex": "={{ $fromAI(\"startIndex\", \"Start index for bullet insertion\", \"number\", 0) }}",
+              "endIndex": "={{ $fromAI(\"endIndex\", \"End index for bullet insertion\", \"number\", 0) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        1780
+      ],
+      "id": "114be933-f4f8-464d-8d92-5f0c543b8b5e",
+      "name": "Google Docs2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $fromAI(\"url\", \"Endpoint address for the request\", \"string\", \"\") }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSlidesOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"jsonBody\", \"JSON data for the request body\", \"json\", \"{}\") }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        1760
+      ],
+      "id": "024e13d8-166e-4df1-b84d-ce73647d6e62",
+      "name": "GOOGLE SLIDES"
+    },
+    {
+      "parameters": {
+        "method": "=",
+        "url": "={{ $fromAI(\"url\", \"Endpoint address for the request\", \"string\", \"\") }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"jsonBody\", \"JSON data for the request body\", \"json\", \"{}\") }}",
+        "placeholderDefinitions": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        1800
+      ],
+      "id": "f208c277-ba92-4efe-8425-d9fd623fcc01",
+      "name": "GOOGLE DOCS API",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "w4xhrfJqVl4mZO4X",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        1860
+      ],
+      "id": "21598572-122f-4ff1-ae1e-a8ff23889050",
+      "name": "GOOGLE SHEETS API"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        1440
+      ],
+      "id": "ce4398e3-026b-445b-830a-ec9ea1948943",
+      "name": "Gmail",
+      "webhookId": "9e194dbb-ae5f-4c0a-a558-4d66cfa0649f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        1440
+      ],
+      "id": "a206b8af-ad1d-435f-ac06-a845ba82dd5e",
+      "name": "Gmail1",
+      "webhookId": "d40c507c-9947-46bb-953a-28011ce74fae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        1480
+      ],
+      "id": "32aef501-41a0-4c9f-8af9-72812b4bff2b",
+      "name": "Gmail2",
+      "webhookId": "d90df846-0aa8-410c-9cd7-31553cae221c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1300,
+        1520
+      ],
+      "id": "730e80c8-00e1-43a7-b022-93c23ba45cfa",
+      "name": "Gmail3",
+      "webhookId": "a0184319-a9fc-41e8-8bb3-823442cc8ec8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        740,
+        1360
+      ],
+      "id": "2dcd4f11-e24a-41b9-b5ba-1513ab922744",
+      "name": "Gmail4",
+      "webhookId": "d3a4d95b-e71e-40a2-806c-fa4a814fc190",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        1600
+      ],
+      "id": "6ef4333d-1eaa-4dae-bd06-3f2192e006f1",
+      "name": "Gmail5",
+      "webhookId": "5d5ebfe6-5a9f-4292-aa40-c56dae4da9ed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        1660
+      ],
+      "id": "db2b1a02-c60c-4116-864e-bd012f6e328e",
+      "name": "Gmail6",
+      "webhookId": "5a5a2d23-7781-48a1-9735-d513818152d5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b5zMt2LZhtgXrZWi",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "search",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        1300
+      ],
+      "id": "a5d57c98-3b12-44e6-9e72-1cbdc7c283ef",
+      "name": "Slack",
+      "webhookId": "65b6a21d-b0e2-4879-a730-f67585000978",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "othIBEvxbpNP3LtZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        1580
+      ],
+      "id": "63a0c51c-6b37-4cdc-b52c-b03142b95c0c",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "m6LzG83gnNQDMklL",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        1460
+      ],
+      "id": "9d718e33-878c-42a3-bc87-bcbe27ab5295",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWolframAlpha",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        1300
+      ],
+      "id": "af46ab41-9a08-4c9b-aa86-835c07444817",
+      "name": "Wolfram Alpha"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        1400
+      ],
+      "id": "78b2a7ac-2c3f-4555-8755-f9cf20805f5f",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2400,
+        1560
+      ],
+      "id": "efa6dfac-be96-47fd-9960-05e0a38903e6",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cw7OF3KbCKn2ke89",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appXeHLRHb0GVPWuL",
+          "mode": "list",
+          "cachedResultName": "Contextual Database ",
+          "cachedResultUrl": "https://airtable.com/appXeHLRHb0GVPWuL"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl6qVsNdaCo86O8P",
+          "mode": "list",
+          "cachedResultName": "Email Inventory",
+          "cachedResultUrl": "https://airtable.com/appXeHLRHb0GVPWuL/tbl6qVsNdaCo86O8P"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2320,
+        1420
+      ],
+      "id": "bbf65c89-9b0e-4fc0-9c6c-8bf32d7ba18f",
+      "name": "Airtable1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cw7OF3KbCKn2ke89",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2280,
+        1580
+      ],
+      "id": "43924290-5e5d-48f8-905b-2509fd25e90e",
+      "name": "Airtable2"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2540,
+        2220
+      ],
+      "id": "5c8672bb-7c80-49ea-83b3-165d4b08df84",
+      "name": "Airtable3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        2480,
+        1380
+      ],
+      "id": "d109e628-eb9e-4eaa-8e54-78d7cf2a0cca",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        3220,
+        1240
+      ],
+      "id": "8f375086-ff5a-4aad-b5af-cec9c3663e8c",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "guIPXS7jK8m9BeN5",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        2860,
+        1500
+      ],
+      "id": "369c807a-313e-43f6-82b8-cc46dcfe10ff",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "guIPXS7jK8m9BeN5",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        2980,
+        1580
+      ],
+      "id": "16112484-e400-4666-8416-fb6a399b7067",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "guIPXS7jK8m9BeN5",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "notice": "",
+        "descriptionType": "auto",
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "permissionsUi": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        3140,
+        1480
+      ],
+      "id": "605e0bd6-02ee-48c9-8216-ca116a99bbe9",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "guIPXS7jK8m9BeN5",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        3100,
+        1300
+      ],
+      "id": "90ca7baf-dc6c-407f-8e2d-4b9d136cab78",
+      "name": "Google Drive4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "guIPXS7jK8m9BeN5",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        1400
+      ],
+      "id": "1333d7df-7883-4011-8b52-cf30304c2685",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "wWGo1nZ7V8BFC77T",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        2100,
+        1400
+      ],
+      "id": "5eed834b-3dd4-4a7f-b333-d1f2dfe3a074",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "specifyInputSchema": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        2140,
+        1300
+      ],
+      "id": "0e85bac3-b8dd-4e67-86ae-83f10eb35861",
+      "name": "Code Tool1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1740,
+        760
+      ],
+      "id": "be0e4d0d-f253-49ed-a6be-42c03579100b",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        140,
+        1060
+      ],
+      "id": "11874cad-1524-4d04-9687-2674b9f1cc73",
+      "name": "Content Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        840,
+        1080
+      ],
+      "id": "a93ab693-8a95-48db-b5db-ffe2935527e3",
+      "name": "Communication Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1300,
+        1080
+      ],
+      "id": "f3782ad0-7f67-4d9d-b9cc-5c51e3e1d6b6",
+      "name": "Research Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1780,
+        1080
+      ],
+      "id": "9367d798-79f8-4231-90a9-c438093cd500",
+      "name": "Data Analysis Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2280,
+        1080
+      ],
+      "id": "58f69db6-d4cc-4d3d-85ad-0063ff3e8ec5",
+      "name": "Projects Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2740,
+        1080
+      ],
+      "id": "38be6b0d-18a6-4e97-8f01-5ffe09578bad",
+      "name": "Knowledge Manager"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "=",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=",
+          "mode": "id"
+        },
+        "toDelete": "=rows",
+        "startIndex": "A"
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        360,
+        1460
+      ],
+      "id": "16d5aabe-e980-424a-9065-3f00aae8ef3b",
+      "name": "Delete Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"document\", \"The ID of the Google Sheets doc\", \"string\", \"\") }}",
+          "mode": "id"
+        },
+        "title": "={{ $fromAI(\"title\", \"The name of the sheet\", \"string\", \"\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        200,
+        1520
+      ],
+      "id": "7b19e76c-56a5-4e59-b67e-7529706a7811",
+      "name": "Create Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"document\", \"The ID of the Google Sheets doc\", \"string\", \"\") }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        1500
+      ],
+      "id": "4b688f60-5075-454d-97cc-52f805381c0f",
+      "name": "Append or Update Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "CONTENT MANAGER": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COMMUNICATIONS MANAGER": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RESEARCH MANAGER": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DATA ANALYSIS MANAGER": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TASKS MANAGER": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GOOGLE SLIDES": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GOOGLE DOCS API": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GOOGLE SHEETS API": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail5": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail6": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "Communication Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wolfram Alpha": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analysis Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analysis Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Projects Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Projects Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Projects Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Projects Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Projects Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analysis Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analysis Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Executive Director1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Rows": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or Update Row": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

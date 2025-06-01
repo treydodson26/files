@@ -1,0 +1,42 @@
+{
+  "name": "My workflow 13",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-c40d024bbe5e41fba9a4e27c43cd2392"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-reasoner\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant who is tasked with creating a step by step plan of action for a personal assistant\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"HI\"\n    }\n  ],\n  \"stream\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        -20
+      ],
+      "id": "90bbf802-11fc-4c33-a586-4e8cb6572914",
+      "name": "DeepSeek R1 Planner"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

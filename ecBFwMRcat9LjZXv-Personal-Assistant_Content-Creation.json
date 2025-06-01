@@ -1,0 +1,219 @@
+{
+  "name": "Personal Assistant_Content Creation",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "02cc8fa2-c28b-4fa1-afff-ea03432ea1bb",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5c5cc540-dead-4671-98a8-d6e565875d2c",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        360,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c827ff3b-2990-4db5-965e-3f3543113720",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "500ae9c3-d4fa-4d6d-a3eb-aef4754313ae",
+      "name": "Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a google app script expert. You will build Google App scripts based on the user's request."
+        }
+      },
+      "id": "42ae2c31-3d85-497f-82aa-1f23c386712b",
+      "name": "Research Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        -60
+      ],
+      "id": "8656cdab-56a5-4180-b883-603a346c2141",
+      "name": "When chat message received",
+      "webhookId": "739a61af-3e77-487d-bbca-6581a9d52478"
+    },
+    {
+      "parameters": {
+        "content": "Add HTTP search Google node for http request that includes the site to search\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        900,
+        -20
+      ],
+      "typeVersion": 1,
+      "id": "2037cdfc-702d-41f1-a82a-859dbaae5d69",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-thinking-exp-01-21",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "id": "cd84e910-d081-4a32-88eb-44828fff9297",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "eBZx0PY4M46UBuZv",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "tdodson@stanford.edu",
+          "mode": "list",
+          "cachedResultName": "tdodson@stanford.edu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        220
+      ],
+      "id": "24d0bdc8-82af-4cae-a9fb-4d562d58f4ae",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "5PL3PpTDVTq8Nqgc",
+          "name": "Google Calendar account 3"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "can you get me 3 articles about the election"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

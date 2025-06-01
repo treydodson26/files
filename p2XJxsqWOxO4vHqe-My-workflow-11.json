@@ -1,0 +1,574 @@
+{
+  "name": "My workflow 11",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "34c3b3cf-f277-4ad0-8df8-e20aca7c28c1",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -600,
+        900
+      ],
+      "webhookId": "5b04dea3-1a5d-4ac5-9866-8d3af35e9e7f"
+    },
+    {
+      "parameters": {},
+      "id": "632d7a11-feb7-4582-9f42-85453aa93e29",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant who tells jokes. "
+        }
+      },
+      "id": "aeabc295-d294-43a8-86f5-da8ec5797df5",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -80,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "model": "=deepseek-reasoner",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -220,
+        520
+      ],
+      "id": "a9e8e18b-0ed5-4740-b0c1-7077f4a60c07",
+      "name": "DeepSeek R1 Model"
+    },
+    {
+      "parameters": {
+        "content": "# DeepSeek R1 Agent (Don't do this)\n\n\n",
+        "height": 280,
+        "width": 960,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -540,
+        140
+      ],
+      "typeVersion": 1,
+      "id": "2cc65207-ab8f-462b-92b4-1779a974b5c3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek/deepseek-r1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        520
+      ],
+      "id": "26c341b6-2061-40e5-9f09-203968097023",
+      "name": "OpenRouter DeepSeek R1"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek-chat",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        520
+      ],
+      "id": "221a4961-e767-4417-9622-1a337834dd7d",
+      "name": "DeepSeek V3 Model"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        520
+      ],
+      "id": "7ee1650f-2be5-4f64-a489-337433343c57",
+      "name": "Send Email",
+      "webhookId": "59161f12-3751-4c7d-aff3-8ecf362c6524"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek-reasoner",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        1140
+      ],
+      "id": "5e0d3d3f-b459-476e-917f-72801572c690",
+      "name": "DeepSeek R1 Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "4myxE8cd1memLsfg",
+          "name": "OpenAi account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent responsible for creating clear and actionable prompts that guide a personal assistant in completing assigned tasks.  \n\n## Context  \n- The agent does not use tools or external resources.  \n- The focus is on providing concise, step-by-step instructions that the personal assistant can follow directly.  \n- Tasks may vary in complexity, but the instructions should remain simple and unambiguous.  \n\n## Instructions  \n1. Receive the task or goal from the user.  \n2. Break down the task into logical, sequential steps that are easy to follow.  \n3. Ensure each step is actionable and includes sufficient detail to avoid confusion.  \n4. Specify any required context or dependencies in the instructions.  \n5. Review the prompt to ensure clarity and completeness before outputting it.  \n\n## Examples  \n- Input: \"Schedule a doctor's appointment for next week.\"  \n- Output:  \n  1. Check the doctor's availability for next week.  \n  2. Choose a time that works with the existing schedule.  \n  3. Call the doctor's office or use the online booking system to make the appointment.  \n  4. Confirm the appointment and note it in the calendar.  \n\n- Input: \"Prepare for John's birthday party.\"  \n- Output:  \n  1. Decide on a date and time for the party.  \n  2. Create a guest list.  \n  3. Purchase decorations and set them up before the party.  \n  4. Arrange for food and drinks.  \n  5. Send out invitations and confirm RSVPs.  \n\n## SOP (Standard Operating Procedure)  \n1. Listen to the user’s task or goal.  \n2. Break the task into actionable steps, ensuring logical order and clarity.  \n3. Include any relevant details or context to avoid ambiguity.  \n4. Review and refine the prompt to ensure it is complete and easy to understand.  \n5. Output the finalized prompt for the personal assistant to follow.  \n\n## Final Notes  \n- Always ensure the instructions are as simple and clear as possible.  \n- Avoid including unnecessary information or overly complex phrasing.  \n- Focus on delivering a ready-to-follow plan without requiring further input.  \n- Here is today's date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -400,
+        900
+      ],
+      "id": "8c488942-f7d7-426a-ad7a-595cdc63c7b4",
+      "name": "DeepSeek Planner"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -40,
+        900
+      ],
+      "id": "92a7bc4a-ac5d-4d64-9dbc-8ddb9da77a1f",
+      "name": "Tools Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        1160
+      ],
+      "id": "30c65281-161f-4571-bf60-68fd858db3a8",
+      "name": "Send Email Tool",
+      "webhookId": "59161f12-3751-4c7d-aff3-8ecf362c6524"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "nateherk88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nateherk88@gmail.com"
+        },
+        "start": "={{ $fromAI(\"startTime\") }}",
+        "end": "={{ $fromAI(\"endTime\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        1160
+      ],
+      "id": "defe736f-bcbf-47d4-b774-954d43d442f1",
+      "name": "Create Event"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        1160
+      ],
+      "id": "d834ce37-91bd-43c7-ad4c-3be4acdcbd53",
+      "name": "GPT-4o Mini"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "236239aa-13b2-432c-88ae-ab48503e1808",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        900
+      ],
+      "id": "74dcd262-409f-483e-9611-5c57be86a63e",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.choices[0].message.content }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        1560
+      ],
+      "id": "112f99ad-a620-4bc2-b654-48b883a4343a",
+      "name": "Tools Agent1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        1820
+      ],
+      "id": "069673cf-1dfc-4ac5-9488-6e595eb21ebe",
+      "name": "Send Email Tool1",
+      "webhookId": "59161f12-3751-4c7d-aff3-8ecf362c6524"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "nateherk88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nateherk88@gmail.com"
+        },
+        "start": "={{ $fromAI(\"startTime\") }}",
+        "end": "={{ $fromAI(\"endTime\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        1820
+      ],
+      "id": "b4745dfc-6881-409d-aca8-43f766c210f9",
+      "name": "Create Event1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        1820
+      ],
+      "id": "85e8aa4e-8a3f-495e-a51b-c9d90292cf7f",
+      "name": "GPT-4o Mini1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "236239aa-13b2-432c-88ae-ab48503e1808",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        1560
+      ],
+      "id": "1d18ded5-0c67-495c-93a7-c951a590ac55",
+      "name": "Response1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-44a781d7c41a46609eed26a64f5b3d69"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-reasoner\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant who is tasked with creating a step by step plan of action for a personal assistant\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.chatInput }}\"\n    }\n  ],\n  \"stream\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -260,
+        1560
+      ],
+      "id": "a420c628-b325-46a9-b704-9bd1f542876b",
+      "name": "DeepSeek R1 Planner"
+    },
+    {
+      "parameters": {
+        "content": "# DeepSeek R1 Planner (HTTP Request)",
+        "height": 540,
+        "width": 1340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        1440
+      ],
+      "typeVersion": 1,
+      "id": "8151faa4-6cbb-451d-8684-82c5a5c5db80",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# DeepSeek R1 Planner Agent",
+        "height": 560,
+        "width": 1180,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -660,
+        760
+      ],
+      "typeVersion": 1,
+      "id": "fd4914e1-f338-4623-a2d9-716e7acbe76b",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1 Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1 Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "DeepSeek Planner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Planner": {
+      "main": [
+        []
+      ]
+    },
+    "Send Email Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tools Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tools Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tools Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tools Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tools Agent1": {
+      "main": [
+        [
+          {
+            "node": "Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tools Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tools Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tools Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1 Planner": {
+      "main": [
+        [
+          {
+            "node": "Tools Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

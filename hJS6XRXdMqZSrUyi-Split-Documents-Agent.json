@@ -1,0 +1,908 @@
+{
+  "name": "Split Documents Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        760,
+        -80
+      ],
+      "id": "d47f3210-a153-4fcb-b85d-71b7ab2e3e44",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        280
+      ],
+      "id": "c1ae3bfc-fdbc-43a3-abee-3d20b0ee5601",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4tt13MQfXUUinHW6",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        -240
+      ],
+      "id": "b055e60d-f6e0-4c18-bf08-fdd6165952f6",
+      "name": "When chat message received",
+      "webhookId": "6c846f03-6c9b-4367-bdf2-c250f1ad5011"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "{baseurl}",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "url",
+              "valueProvider": "fieldValue",
+              "value": "{URL}"
+            },
+            {
+              "name": "httpusername",
+              "valueProvider": "fieldValue",
+              "value": "{httpusername}"
+            },
+            {
+              "name": "httppassword",
+              "valueProvider": "fieldValue",
+              "value": "{httppassword}"
+            },
+            {
+              "name": "pages",
+              "valueProvider": "fieldValue",
+              "value": "{pages}"
+            },
+            {
+              "name": "password",
+              "valueProvider": "fieldValue",
+              "value": "{password}"
+            },
+            {
+              "name": "async",
+              "valueProvider": "fieldValue",
+              "value": "{async}"
+            },
+            {
+              "name": "inline",
+              "valueProvider": "fieldValue",
+              "value": "{inline}"
+            },
+            {
+              "name": "name",
+              "valueProvider": "fieldValue",
+              "value": "{name}"
+            },
+            {
+              "name": "expiration",
+              "valueProvider": "fieldValue",
+              "value": "{expiration}"
+            },
+            {
+              "name": "profiles",
+              "valueProvider": "fieldValue",
+              "value": "{profiles}"
+            },
+            {
+              "name": "searchString",
+              "valueProvider": "fieldValue",
+              "value": "{searchString}"
+            },
+            {
+              "name": "excludeKeyPages",
+              "valueProvider": "fieldValue",
+              "value": "{excludeKeyPages}"
+            },
+            {
+              "name": "regexSearch",
+              "valueProvider": "fieldValue",
+              "value": "{regexSearch}"
+            },
+            {
+              "name": "caseSensitive",
+              "valueProvider": "fieldValue",
+              "value": "{caseSensitive}"
+            },
+            {
+              "name": "lang",
+              "valueProvider": "modelOptional"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "URL",
+              "description": "URL to the source file. Supports publicly accessible links from any source, including Google Drive, Dropbox, and PDF.co Built-In Files Storage.",
+              "type": "string"
+            },
+            {
+              "name": "baseurl",
+              "description": "Base API endpoint URL",
+              "type": "string"
+            },
+            {
+              "name": "apiKey",
+              "description": "API key for authentication",
+              "type": "string"
+            },
+            {
+              "name": "httpusername",
+              "description": "HTTP auth user name if required to access source URL.",
+              "type": "string"
+            },
+            {
+              "name": "httppassword",
+              "description": "HTTP auth password if required to access source URL.",
+              "type": "string"
+            },
+            {
+              "name": "pages",
+              "description": "Comma-separated indices of pages (or page ranges) to split. Use ! for inverted page numbers (e.g., !1 means 'last page'). * splits every page into separate files.",
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "description": "Password of the PDF file. Required if the file is password-protected.",
+              "type": "string"
+            },
+            {
+              "name": "async",
+              "description": "Set to true for long processes to run in the background. Returns a jobId to track the process using the Background Job Check endpoint.",
+              "type": "boolean"
+            },
+            {
+              "name": "inline",
+              "description": "Set to true to return results inside the response instead of a link to the output file.",
+              "type": "boolean"
+            },
+            {
+              "name": "name",
+              "description": "File name for the generated output. Input must be in string format.",
+              "type": "string"
+            },
+            {
+              "name": "expiration",
+              "description": "Set the expiration time for the output link in minutes. Default is 60 minutes. After expiration, files are deleted from PDF.co Temporary Files Storage.",
+              "type": "number"
+            },
+            {
+              "name": "profiles",
+              "description": "Set additional configurations for fine-tuning and extra options. Refer to the Profiles section in the documentation for more details.",
+              "type": "string"
+            },
+            {
+              "name": "searchString",
+              "description": "Text or barcode to search for on pages. Use macros like [[barcode:qrcode]] for barcode searches. Supports regular expressions.",
+              "type": "string"
+            },
+            {
+              "name": "excludeKeyPages",
+              "description": "Set to true to exclude pages where the searchString text or barcode was found.",
+              "type": "boolean"
+            },
+            {
+              "name": "regexSearch",
+              "description": "Set to true to enable regular expressions for searchString.",
+              "type": "boolean"
+            },
+            {
+              "name": "caseSensitive",
+              "description": "Set to true to enable case-sensitive search for searchString.",
+              "type": "boolean"
+            },
+            {
+              "name": "lang",
+              "description": "Set the language for OCR when processing scanned PDF, PNG, or JPG documents. Default is 'eng' (English).",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        520
+      ],
+      "id": "3fd8d579-73b2-4491-9e16-a57d26b4b522",
+      "name": "PDF Split"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/pdf/merge",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "httpusername",
+              "valueProvider": "fieldValue",
+              "value": "{httpusername}"
+            },
+            {
+              "name": "httppassword",
+              "valueProvider": "fieldValue",
+              "value": "{httppassword}"
+            },
+            {
+              "name": "async",
+              "valueProvider": "fieldValue",
+              "value": "{async}"
+            },
+            {
+              "name": "name",
+              "valueProvider": "fieldValue",
+              "value": "{name}"
+            },
+            {
+              "name": "expiration",
+              "valueProvider": "fieldValue",
+              "value": "{expiration}"
+            },
+            {
+              "name": "profiles",
+              "valueProvider": "fieldValue",
+              "value": "{profiles}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "url",
+              "description": "URL to the source file. Supports publicly accessible links from any source, including Google Drive, Dropbox, and PDF.co Built-In Files Storage.",
+              "type": "string"
+            },
+            {
+              "name": "httpusername",
+              "description": "HTTP auth user name if required to access source URL",
+              "type": "string"
+            },
+            {
+              "name": "httppassword",
+              "description": "HTTP auth password if required to access source URL",
+              "type": "string"
+            },
+            {
+              "name": "async",
+              "description": "Set to true for long processes to run in the background. Returns a jobId for status tracking",
+              "type": "boolean"
+            },
+            {
+              "name": "name",
+              "description": "File name for the generated output in string format",
+              "type": "string"
+            },
+            {
+              "name": "expiration",
+              "description": "Set the expiration time for the output link in minutes. Default is 60 minutes",
+              "type": "number"
+            },
+            {
+              "name": "profiles",
+              "description": "Additional configurations for fine-tuning and extra options",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        680
+      ],
+      "id": "84230193-15b0-48ee-b5cb-5fd7a70cfa05",
+      "name": "PDF Merge"
+    },
+    {
+      "parameters": {
+        "toolDescription": "With this method you can upload files up to 100mb in size. Please note that to process these files you should use async=true mode with data extraction and tools endpoints along with /job/check to check status of background jobs you create.",
+        "method": "PUT",
+        "url": "{presignedUrl}",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/octet-stream"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "fileData",
+              "valueProvider": "fieldValue",
+              "value": "{fileData}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "presignedUrl",
+              "description": "The presigned URL received from get-presigned-url endpoint",
+              "type": "string"
+            },
+            {
+              "name": "fileData",
+              "description": "Binary file data to upload"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        240
+      ],
+      "id": "aeea48ae-64d7-461b-8c2a-422daf5f7165",
+      "name": "Presigned URL Upload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/file/upload",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "file",
+              "valueProvider": "fieldValue",
+              "value": "{fileData}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fileData",
+              "description": "File data to upload (up to 100KB)",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1300,
+        680
+      ],
+      "id": "72297ab7-9e91-4153-a6f0-6b823a06e83b",
+      "name": "File Upload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/file/upload/base64",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "file",
+              "valueProvider": "fieldValue",
+              "value": "{base64Data}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "base64Data",
+              "description": "Base64 encoded file data (format: data:image/gif;base64,...)",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        760
+      ],
+      "id": "55da71a7-6302-43d6-94c5-d3fa818f2d0f",
+      "name": "Base64 Upload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/file/upload/url",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "name",
+              "valueProvider": "fieldValue",
+              "value": "{fileName}"
+            },
+            {
+              "name": "url",
+              "valueProvider": "fieldValue",
+              "value": "{Url}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fileName",
+              "description": "Name for the uploaded file",
+              "type": "string"
+            },
+            {
+              "name": "Url",
+              "description": "URL of the file to upload",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        620
+      ],
+      "id": "36de8728-0ec1-4803-b335-2b36bd3a3e24",
+      "name": "URL Upload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/pdf/info",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "url",
+              "valueProvider": "fieldValue",
+              "value": "{sourceUrl}"
+            },
+            {
+              "name": "httpusername",
+              "valueProvider": "fieldValue",
+              "value": "{httpUsername}"
+            },
+            {
+              "name": "httppassword",
+              "valueProvider": "fieldValue",
+              "value": "{httpPassword}"
+            },
+            {
+              "name": "password",
+              "valueProvider": "fieldValue",
+              "value": "{pdfPassword}"
+            },
+            {
+              "name": "async",
+              "valueProvider": "fieldValue",
+              "value": "{async}"
+            },
+            {
+              "name": "profiles",
+              "valueProvider": "fieldValue",
+              "value": "{profiles}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "Url",
+              "description": "URL to the source PDF file",
+              "type": "string"
+            },
+            {
+              "name": "httpUsername",
+              "description": "HTTP auth username if required to access source URL",
+              "type": "string"
+            },
+            {
+              "name": "httpPassword",
+              "description": "HTTP auth password if required to access source URL",
+              "type": "string"
+            },
+            {
+              "name": "pdfPassword",
+              "description": "Password of PDF file if encrypted",
+              "type": "string"
+            },
+            {
+              "name": "async",
+              "description": "Set to true for background processing of large files",
+              "type": "boolean"
+            },
+            {
+              "name": "profiles",
+              "description": "Additional configurations for fine-tuning",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        660
+      ],
+      "id": "91f51cd4-5abb-4213-b158-ff31de25d034",
+      "name": "PDF Info"
+    },
+    {
+      "parameters": {
+        "toolDescription": "This method generates links to upload your local file to. Use this presignedUrl from the response to upload your file. Once you upload your file to this presignedUrl using PUT, you can use the url link to access the uploaded file.\n\nWith this method you can upload files up to 2GB in size. Please note that to process these files you should use async=true mode with data extraction and tools endpoints along with /job/check to check status of background jobs you create.",
+        "url": "https://api.pdf.co/v1/file/upload/get-presigned-url",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "x-api-key",
+              "valueProvider": "fieldValue",
+              "value": "treydodson26@gmail.com_OJ3kNa2A1y0A3o9B3r665v8X8E6hi6oQ9ptdofnu2DLdyP2Fk77132As892l0Bnc"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fileName",
+              "description": "Optionally include a name for the uploaded file. ",
+              "type": "string"
+            },
+            {
+              "name": "encrypt",
+              "description": "Whether to encrypt the file",
+              "type": "boolean"
+            },
+            {
+              "name": "contentType",
+              "description": "Content type of the uploaded file",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        60
+      ],
+      "id": "c810454a-3f48-432b-bfb7-2784af0caeda",
+      "name": "Get Presigned URL1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1-P-fBmn8X9s-aS4ZJIxUU1Iu1UCFhlgZ9R7UUCjycdA",
+          "mode": "list",
+          "cachedResultName": "014386-00 ISS_2019 (1)",
+          "cachedResultUrl": "https://docs.google.com/document/d/1-P-fBmn8X9s-aS4ZJIxUU1Iu1UCFhlgZ9R7UUCjycdA/edit?usp=drivesdk"
+        },
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        320,
+        680
+      ],
+      "id": "a99ffb3d-ed02-43c5-bc74-124254680d04",
+      "name": "Google Drive1",
+      "notesInFlow": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "okP47BlPJwslFH1q",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "ttps://drive.google.com/file/d/128cNZtmRkY7aq0arzj3upu9ky6CrwaFq/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        1560,
+        -100
+      ],
+      "id": "e149b335-e0b8-47e3-98bb-a82a2410f59f",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "okP47BlPJwslFH1q",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        -20
+      ],
+      "id": "720a6028-377d-4193-a9a5-7a02bf6ae37e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        -20
+      ],
+      "id": "f2168874-41ad-4722-8218-0168d154853d",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Split": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Merge": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Presigned URL Upload": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Upload": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 Upload": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Upload": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Info": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Presigned URL1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

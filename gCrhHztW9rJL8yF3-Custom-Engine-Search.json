@@ -1,0 +1,338 @@
+{
+  "name": "Custom Engine Search",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4c89dcb5-94c5-4a80-aa0d-49b2a925f835",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=ENGINE_ID&q=CEO+real+estate+Chicago&num=10&start={{ $json.start }}\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4d82a291-8f2a-41d2-8db0-829381ac1458",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let start = 0;  // Initial page\nconst limit = 100;  // Limit to fetch 500 profiles (adjust as needed)\nconst batchSize = 10;  // Google Search returns 100 results per page\nconst output = [];\n\n// Loop through pages by increments of 100\nwhile (start < limit) {\n  output.push({ json: { start: start } });\n  start += batchSize;  // Increment by 100 for each page\n}\n\nreturn output;\n"
+      },
+      "id": "e70dc27f-081e-4a79-94e9-3f5b2d537604",
+      "name": "Pagination",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9d730fa3-73a5-44e3-9a56-cf564b6ef760",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -20,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the items array from the response\nconst items = $json[\"items\"];  // Access the items array directly from the response\n\n// Create an empty array to store the extracted URLs\nconst output = [];\n\nif (items && items.length > 0) {\n  // Loop over each item in the array and extract the 'link'\n  for (const item of items) {\n    if (item.link) {\n      // Push each extracted URL as a separate item in the output\n      output.push({\n        json: {\n          url: item.link,\n        }\n      });\n    }\n  }\n}\n\nreturn output;  // Return the array of URL items\n"
+      },
+      "id": "2c12a458-2f4e-4107-b768-6a8c0e1fa270",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1080
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1_0bfvmyLdhc-j8QhCDDRVZQZvk5TNg7TYoUsvyh9MvY",
+          "mode": "list",
+          "cachedResultName": "Profiles Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0bfvmyLdhc-j8QhCDDRVZQZvk5TNg7TYoUsvyh9MvY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0bfvmyLdhc-j8QhCDDRVZQZvk5TNg7TYoUsvyh9MvY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "093fffa7-1ca4-4469-b167-a9c9e5d360b1",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=ENGINE_ID&q=CEO+real+estate+Chicago&num=10&start={{ $json.start }}\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ca24287-bb59-472e-b202-f15de8aded42",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let start = 0;  // Initial page\nconst limit = 100;  // Limit to fetch 500 profiles (adjust as needed)\nconst batchSize = 10;  // Google Search returns 100 results per page\nconst output = [];\n\n// Loop through pages by increments of 100\nwhile (start < limit) {\n  output.push({ json: { start: start } });\n  start += batchSize;  // Increment by 100 for each page\n}\n\nreturn output;\n"
+      },
+      "id": "e5db3ccb-61ac-4c79-8381-016e11c19b9c",
+      "name": "Pagination1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "256bbaab-1d8c-4ed5-bbd9-dfc69f2b1a24",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        380,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the items array from the response\nconst items = $json[\"items\"];  // Access the items array directly from the response\n\n// Create an empty array to store the extracted URLs\nconst output = [];\n\nif (items && items.length > 0) {\n  // Loop over each item in the array and extract the 'link'\n  for (const item of items) {\n    if (item.link) {\n      // Push each extracted URL as a separate item in the output\n      output.push({\n        json: {\n          url: item.link,\n        }\n      });\n    }\n  }\n}\n\nreturn output;  // Return the array of URL items\n"
+      },
+      "id": "819437f7-0ce7-4115-a4c6-1c269cdeb0c3",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        200
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1owg55LFov5LjB16CjR_9TT-k7NFIErdaGvrQ1sPgSo8",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1owg55LFov5LjB16CjR_9TT-k7NFIErdaGvrQ1sPgSo8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1owg55LFov5LjB16CjR_9TT-k7NFIErdaGvrQ1sPgSo8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "57ebdd14-81ef-48b9-bd10-5fef581c68aa",
+      "name": "Google Sheets1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        980,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Sa7Y98iFWIb4fDUY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Pagination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagination": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagination1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}
