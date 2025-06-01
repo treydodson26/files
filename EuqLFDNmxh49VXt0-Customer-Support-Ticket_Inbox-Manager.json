@@ -1,0 +1,605 @@
+{
+  "name": "Customer Support Ticket_Inbox Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "prompt"
+            },
+            {
+              "name": "content",
+              "type": "any"
+            },
+            {
+              "name": "context",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "e2f811c8-3d38-4dd5-9910-7a5c8abfcbae",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        420
+      ],
+      "id": "c0fe58df-0783-4d62-b259-7cd96e3dc34f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.content.threadId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        420
+      ],
+      "id": "44f4c71e-62ba-414e-9474-c80c0a735f7e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "11df456d-b5fb-41f4-a23f-a6e88467f21c",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "ee2d5a71-6126-4744-9b82-0c4c3ce9e7e5",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "ff76b083-e8ae-4b25-99a5-7b42d2fc72b2",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        200
+      ],
+      "id": "631e3d36-95bc-449e-8816-ecb7ae0f47de",
+      "name": "set output values"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "oPe2geSGUdd89p28",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — Customer Support Agent_Activity Log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        200
+      ],
+      "id": "d33c3522-de83-4bce-a625-01e6a0e4bf82",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appvV6nOVtwKIZaVx",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent (Community)",
+          "cachedResultUrl": "https://airtable.com/appvV6nOVtwKIZaVx"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYzLAsCDAuesxiz",
+          "mode": "list",
+          "cachedResultName": "ticketLog",
+          "cachedResultUrl": "https://airtable.com/appvV6nOVtwKIZaVx/tblYzLAsCDAuesxiz"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id__using_to_match_', `the Airtable record ID shown in the CONTEXT section.`, 'string') }}",
+            "agentCategory": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('agentCategory', `Category of the ticket.`, 'string') }}",
+            "agentLabel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('agentLabel', `Label of the ticket / reason for being in the category.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cc",
+              "displayName": "cc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "bcc",
+              "displayName": "bcc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "agentCategory",
+              "displayName": "agentCategory",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agentLabel",
+              "displayName": "agentLabel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "modifiedTrigger",
+              "displayName": "modifiedTrigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "trigger",
+              "displayName": "trigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        620,
+        420
+      ],
+      "id": "2ff0fe47-914b-4055-b9aa-7fe60f03c6f7",
+      "name": "categorize",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"category\": \"The category of the ticket\",\n\t\"label\": [\"Your label\", \"Not the label from Gmail\", \"You label here\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        420
+      ],
+      "id": "c2f3db09-1edf-4c68-8c0d-ce8ccd371cb7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# NEW TICKET\n\n{{ JSON.stringify($json.content, null, 2) }}\n\n# CONTEXT",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\n{{ $json.prompt }}\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        340,
+        200
+      ],
+      "id": "2021713b-8500-4edd-a5f4-415aace34d18",
+      "name": "inbox manager",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Inbox Ticket Categorizer",
+        "height": 80,
+        "width": 300,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f8bb7fb1-441f-427c-b3fa-7f4b7a022424",
+      "name": "Sticky Note - Title"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\n\nThis workflow handles incoming support tickets. It reads the ticket text using an AI agent, adds helpful memory, then outputs a category and short labels. The results are saved to Airtable and an activity log. All steps run automatically when another workflow triggers this one.",
+        "height": 180,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -440,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "5f17019e-1e9e-4688-b779-66ab14fac332",
+      "name": "Sticky Note - Summary"
+    },
+    {
+      "parameters": {
+        "content": "Triggered by parent workflow",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "d01f5f13-def7-4636-9ff3-f75a941a399d",
+      "name": "Sticky Note - Trigger"
+    },
+    {
+      "parameters": {
+        "content": "AI agent categorizes ticket",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "a6474ad5-0058-4128-ace9-f4ea99d752a1",
+      "name": "Sticky Note - Agent"
+    },
+    {
+      "parameters": {
+        "content": "Stores chat context per thread",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        540
+      ],
+      "typeVersion": 1,
+      "id": "7631b8fc-4ac7-444c-99b7-866648ea4e62",
+      "name": "Sticky Note - Memory"
+    },
+    {
+      "parameters": {
+        "content": "Writes category & labels to Airtable",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        600,
+        580
+      ],
+      "typeVersion": 1,
+      "id": "106fbeb7-8c5e-43b6-b6ac-45f7c2e61e83",
+      "name": "Sticky Note - Airtable"
+    },
+    {
+      "parameters": {
+        "content": "Calls activityLog workflow",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        980,
+        360
+      ],
+      "typeVersion": 1,
+      "id": "1de00dd7-a35b-4c29-be69-dab2c7ad6039",
+      "name": "Sticky Note - ActivityLog"
+    },
+    {
+      "parameters": {
+        "content": "Maps AI output fields",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        720,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "456fa1fa-2b95-440e-8008-7fdfb775c018",
+      "name": "Sticky Note - SetOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set output values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "categorize": {
+      "ai_tool": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "inbox manager": {
+      "main": [
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,615 @@
+{
+  "name": "🤖 Inbox Ticket Categorizer",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "prompt"
+            },
+            {
+              "name": "content",
+              "type": "any"
+            },
+            {
+              "name": "context",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "75fc6d10-1c5f-4635-bae1-d0cebf309c40",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        420
+      ],
+      "id": "626ab1ab-dba3-4eb5-b738-7b574b172493",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.content.threadId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        420
+      ],
+      "id": "22ed45b7-e80b-44f6-ae69-d8656f1ce9b2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "11df456d-b5fb-41f4-a23f-a6e88467f21c",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "ee2d5a71-6126-4744-9b82-0c4c3ce9e7e5",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "ff76b083-e8ae-4b25-99a5-7b42d2fc72b2",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        200
+      ],
+      "id": "d05b1dae-4c1c-4658-a5f0-fd55c1c67499",
+      "name": "set output values"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QXasMu19ZKELedDY",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — activityLog (customer support superagent)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        200
+      ],
+      "id": "16a56299-6e17-4263-b3b9-6ada8f2b0822",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appeLFZWyPEiy1h7g",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYzLAsCDAuesxiz",
+          "mode": "list",
+          "cachedResultName": "ticketLog",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g/tblYzLAsCDAuesxiz"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id__using_to_match_', `the Airtable record ID shown in the CONTEXT section.`, 'string') }}",
+            "agentCategory": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('agentCategory', `Category of the ticket.`, 'string') }}",
+            "agentLabel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('agentLabel', `Label of the ticket / reason for being in the category.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cc",
+              "displayName": "cc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "bcc",
+              "displayName": "bcc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "agentCategory",
+              "displayName": "agentCategory",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agentLabel",
+              "displayName": "agentLabel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "modifiedTrigger",
+              "displayName": "modifiedTrigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "trigger",
+              "displayName": "trigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        620,
+        420
+      ],
+      "id": "929f0c74-2b93-460c-b367-a678f4d76dc0",
+      "name": "categorize"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"category\": \"The category of the ticket\",\n\t\"label\": [\"Your label\", \"Not the label from Gmail\", \"You label here\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        420
+      ],
+      "id": "c559f2f9-aeef-429f-b140-87deb529cd2d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# NEW TICKET\n\n{{ JSON.stringify($json.content, null, 2) }}\n\n# CONTEXT",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\n{{ $json.prompt }}\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        340,
+        200
+      ],
+      "id": "cb651a0d-73f3-415c-a5bb-87f94d8d14b9",
+      "name": "inbox manager",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Inbox Ticket Categorizer",
+        "height": 80,
+        "width": 300,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "8bfe1ec8-4f9d-4284-8cb8-28de380e3798",
+      "name": "Sticky Note - Title"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\n\nThis workflow handles incoming support tickets. It reads the ticket text using an AI agent, adds helpful memory, then outputs a category and short labels. The results are saved to Airtable and an activity log. All steps run automatically when another workflow triggers this one.",
+        "height": 180,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -440,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "da60ec6f-82a0-4bf0-9047-0080f2bef198",
+      "name": "Sticky Note - Summary"
+    },
+    {
+      "parameters": {
+        "content": "Triggered by parent workflow",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "9976a329-9c79-4678-9f4f-536603cb052a",
+      "name": "Sticky Note - Trigger"
+    },
+    {
+      "parameters": {
+        "content": "AI agent categorizes ticket",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "518fd4cd-71ef-4a3c-8202-71d5d7aaa882",
+      "name": "Sticky Note - Agent"
+    },
+    {
+      "parameters": {
+        "content": "Stores chat context per thread",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        540
+      ],
+      "typeVersion": 1,
+      "id": "2b0009a7-7b72-4e58-8d75-74dd3a7f2c8d",
+      "name": "Sticky Note - Memory"
+    },
+    {
+      "parameters": {
+        "content": "Writes category & labels to Airtable",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        600,
+        580
+      ],
+      "typeVersion": 1,
+      "id": "9672e597-6529-4ee5-8ceb-f68f22629b37",
+      "name": "Sticky Note - Airtable"
+    },
+    {
+      "parameters": {
+        "content": "Calls activityLog workflow",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        980,
+        360
+      ],
+      "typeVersion": 1,
+      "id": "27e6dbf8-91e0-40ab-bf56-7dbe7c4e0234",
+      "name": "Sticky Note - ActivityLog"
+    },
+    {
+      "parameters": {
+        "content": "Maps AI output fields",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        720,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "a86580bb-c1cd-47fb-8eed-2c7d701704cc",
+      "name": "Sticky Note - SetOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set output values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "categorize": {
+      "ai_tool": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "inbox manager",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "inbox manager": {
+      "main": [
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "prompt": "You are a customer support agent. Your only job is to read incoming support tickets and accurately categorize and label them based on their content.\n\n[INSTRUCTIONS]\n1. Assign a category\n-- Billing\n-- Technical Issue\n-- Feature Request\n-- Bug Report\n-- Account Management\n-- General Inquiry\n2. Assign labels/tags that summarize the topic more specifically (e.g. “invoice error”, “login failure”, “API timeout”, “UI feedback”).\n- Be concise, objective, and consistent.\n- If unclear, choose the best possible category based on available info and tag it with “needs-review”.\n\n[EXAMPLE]\nInput: Raw text of the customer ticket\nOutput:\n\n{\n  \"category\": \"string\",\n  \"labels\": [\"string\"]\n}\n\nExample:\nTicket: “Hi, I can’t access my account after resetting my password. Please help.”\nResponse:\n\n{\n  \"category\": \"Technical Issue\",\n  \"labels\": [\"password reset\", \"login problem\"]\n}\n",
+          "content": {
+            "id": "196c5bc4466c5ef7",
+            "threadId": "196c5bc4466c5ef7",
+            "labels": "[\n  \"UNREAD\",\n  \"IMPORTANT\",\n  \"CATEGORY_UPDATES\",\n  \"INBOX\"\n]",
+            "text": "-->\n\n-----------------------------------------------------------------\nAdding another 1 or 2 VIP Hangout sessions. \n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfiyFBLO31BbzeP6rIjO9ONgiZ5MMiy180nnxSa88-2FFiWivswQIookWGsPH89dsAVzBMwAgrriK-2BSXA7vE-2B1cM6Y-2BHwGELx1mQrtpmCd7-2F-2B-2Fig-3D-3DW0v9_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYdrpnvnFuA5VNG-2Bjv9nDpo1Y9akW-2FqmhTzQ3E9VhKO2fhODxpFKx-2Blp7RVzHHl-2B-2BFaFTgFI-2Fh6L-2BSPXtVr22iUXTi98EJvi5Oa19cIqYDbQOc4MwLzIXXV6hsWtHbj5xGg-3D-3D )\n\n-----------------------------------------------------------------\n\n\n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfiyFBLO31BbzeP6rIjO9ONgiZ5MMiy180nnxSa88-2FFiWivswQIookWGsPH89dsAVzBMwAgrriK-2BSXA7vE-2B1cM6Y-2BHwGELx1mQrtpmCd7-2F-2B-2Fig-3D-3DYJ4__x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYf1kBlfwWWPzYfhPYkjJ7-2Ft-2B0mUjs8TtK4mbRmGRcy1v7vMqWoHMRLqhCBWHltu-2BpwqniMfMnlwu-2Fb-2F5fh-2Ft-2FG6bbv1VET0-2FIUuPxVlg-2BDM-2B-2FJZdGGLJN5XdTrqTjjr4Ng-3D-3D )\n\n\nDevin Kearns \n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfh4R6QcqjyAfuOA7Bw-2FCPbGsUhSJkwkcjGqXLPOea1r7w-3D-3DO3pa_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYb1NnkhGBQQeNiZEJxVO4caIxs4Cm9QDa-2BNF8izyFOwql5O9Le4OfpFj81Qp7OxKzzKPPMyNLMM3-2BUSKgQpf4nImE3lDKRKKGpUk1ojhDULP-2FKYEJG-2FjnQryNIJ7SzMwzQ-3D-3D )\n\nPosted in VIP\nDiscussion ( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfh4R6QcqjyAfuOA7Bw-2FCPbGsUhSJkwkcjGqXLPOea1r7w-3D-3DJcNB_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYQtxIOcvwsG-2BDYXFqSImbK7q9wTH3DQ-2Bv9g6LH4TqeJff9kj79s-2F5VNd7WEBiU5YLZw3nAcpOB6XsvbxTgUhmeI9w-2BHsX-2FdIQmn82ZOhbLDWD4bKcb-2B0WhIbRbpqn9BJcw-3D-3D )\n\n-->\n\nWhich day would work best for an additional VIP Hangouts / Office\nHours session?\n-----------------------------------------------------------------\n\n* Monday\n\n* Tuesday\n\n* Wednesday\n\n* Thursday\n\n* Sunday\n\nView post \n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfiyFBLO31BbzeP6rIjO9ONgiZ5MMiy180nnxSa88-2FFiWivswQIookWGsPH89dsAVzBMwAgrriK-2BSXA7vE-2B1cM6Y-2BHwGELx1mQrtpmCd7-2F-2B-2Fig-3D-3DPhnm_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYYxcThkqYW-2FGNc7CQDtdG4g9tTqM0UpJEMcqw-2FR6zntqxZMtsk5LT21x4-2Fn7Ijeh0ag3RlGJEmUSsP7G8cWnMF0h3dstBDqVjyC7pDsYDuxDflYpxCdLAhInLjjYbsiZ-2BA-3D-3D )\n\n\nChange notification settings \n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfi3vwa513StkbkaBCusgJk93dQcV8vSpuy9yh3u79RvDBD93wQSFZ5P7VblIEHPTvW7ALQbmSMHvkW3Jvyj5zto9dEWJs7XJpGhJ4wBnnKZch508xilPNKiN3rwOoKpvJf6tYVXJqgPHrvrAr1jsDtWOJru-2BjKLQsEOqE3YUKgtiHKZerUWaTpfShsUguf3v5b6Rr-2FdXdsOrgVnx1bLRseKndl0u3Cu-2FaQQIEoJvEvJnSO2X9WqayQS35xW1yQ0Fbs-3DSMou_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYdP1C-2Bz9qvHVsPB1EjrbEnWtY6D41tJknyIZ3HMX57mGe8DSreEvWlgPoOaxqVPEswpdafMRQ2dbkC4owT09Fms9RxBIEuPIuZDuOfh7BA5Ja5jByA5cl6eJSsMhxeyk-2BA-3D-3D )\n\n\nUnsubscribe from all emails \n( https://url6405.circle.so/ls/click?upn=u001.ZSXwBF7UX5hIhLEtDmGdKSAeeDeccroJl7D9nde-2BNfi3vwa513StkbkaBCusgJk93dQcV8vSpuy9yh3u79RvDIkWcCkduhpLO5bYOI-2FBoU7eucWkZ4WR6y0nEy7aJ26LuNpGs1mEoXgplpSCQroPuffttCosnVdxErDIWzgSBjIr4d5G7wh2EYjo-2BqvfrTutp7OWOz-2B-2Bf0GVz-2F-2F8MHfDNOv5biHp1ExondrBlWFdQ9yEKe0XcCSSTk9C4LbmeBex2Mm3Ff3equassSLSl3XZHw-3D-3D8pXk_x4DPWpAzUYakfbThh4QbXm4Bk-2BviVXIjc1h8ZgJEXchY6rpo7JVn2Lt2p3PQPXxr0M7YrjFYIzBaSOLWvPLeYWWVynNW0Z2Fv4hplMeyNMwRRe1Lhmuoc5SAHViGFWEeBXrA4qkLmZyJZHHOSn4e86h8CeswDr3epXpD09LsfQCjmQscy5PvcvvK2oBUhlIggJp00RnO-2FKzoBVhoATSyDw-3D-3D )",
+            "subject": "Adding another 1 or 2 VIP Hangout sessions.",
+            "date": "2025-05-12T18:22:51.000Z",
+            "to": "[\n  {\n    \"address\": \"pratik@customaistudio.io\",\n    \"name\": \"\"\n  }\n]",
+            "from": "[\n  {\n    \"address\": \"no-reply@circle.so\",\n    \"name\": \"Custom AI Studio\"\n  }\n]",
+            "cc": "null",
+            "bcc": "null"
+          },
+          "context": {
+            "agent": "recLA9X6aqNILtJ94",
+            "recordId": "rec66VJ30E17ku4bf"
+          }
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}

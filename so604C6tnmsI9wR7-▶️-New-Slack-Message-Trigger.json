@@ -1,0 +1,589 @@
+{
+  "name": "▶️ New Slack Message Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"challenge\": \"{{ $json.body.challenge }}\"}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "fccc479a-bec9-4475-9d0c-ce772e5b7b0c",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b24b03e3-24d1-4ce8-b014-3a854c50612a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7f6c4ae5-f75e-40aa-9c96-65e4ecd55341",
+      "name": "Slack Message [CAiS Internal]",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        220
+      ],
+      "webhookId": "b24b03e3-24d1-4ce8-b014-3a854c50612a"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "RrCNoAkUW8BB836O",
+          "mode": "list",
+          "cachedResultName": "Devin Kearns — 🤖 TASK MANAGEMENT AGENT"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        220
+      ],
+      "id": "f59625d7-97a8-42a2-96b3-de45896b2a84",
+      "name": "TASK MANAGEMENT AGENT",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yjraV7vmxqqDP84J",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 data manager"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        440
+      ],
+      "id": "915f8c7f-dda5-4588-95a5-0984bff1a4cd",
+      "name": "DATA MANAGER"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e48aff9-b454-4061-a70c-8392a76876b7",
+              "name": "content.text",
+              "value": "={{ $json.body.event.text }}",
+              "type": "string"
+            },
+            {
+              "id": "74e3dd49-55ba-46b2-ade8-7f832cc6bb76",
+              "name": "content.source",
+              "value": "slacklog",
+              "type": "string"
+            },
+            {
+              "id": "675a6c23-d0b6-4788-9bc3-cb04ba50d884",
+              "name": "content.user",
+              "value": "={{ $json.body.event.user }}",
+              "type": "string"
+            },
+            {
+              "id": "3d35603d-62c6-4593-9495-0a6f1be8102f",
+              "name": "context",
+              "value": "null",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        220
+      ],
+      "id": "53b9b4aa-6c54-4755-a7d5-64bedb9620d0",
+      "name": "set content & context"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b706b51-0aba-4322-9a67-693c6243a586",
+              "leftValue": "={{ $('Respond to Webhook').item.json.body.event.channel }}",
+              "rightValue": "C087P2UJVH6",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "b01ea057-8633-4bd1-a570-4b775eac14d8",
+              "leftValue": "={{ $('Respond to Webhook').item.json.body.event.user }}",
+              "rightValue": "U087P2KJ464",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "4e3718d7-1b28-4229-82c7-af7ac715ccd0",
+              "leftValue": "={{ $('Respond to Webhook').item.json.body.event.text }}",
+              "rightValue": "generate proposal",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        20
+      ],
+      "id": "4dfbc131-e47c-4190-a58f-9cd55a368ce6",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a9af5e7-7dff-4125-8702-051fe332fba7",
+              "name": "content.text",
+              "value": "={{ $('Filter').item.json.content.text }}",
+              "type": "string"
+            },
+            {
+              "id": "56bb6983-fdb2-4be5-ae65-95d9f7ce7baf",
+              "name": "context.sessionId",
+              "value": "={{ $('Respond to Webhook').item.json.body.event.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "708b8db1-a392-4387-ba9c-3773ebff9de1",
+              "name": "context.user",
+              "value": "={{ $('Filter').item.json.content.user }}",
+              "type": "string"
+            },
+            {
+              "id": "291629db-b680-4ada-ae1d-423d085ce668",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        840,
+        20
+      ],
+      "id": "b114f115-0387-41c8-ab10-f117bd819506",
+      "name": "set prompt, content & context"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9qTtUKFRLmD0iSGh",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 MALLORY [community]"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1020,
+        20
+      ],
+      "id": "0e1e1e73-8c6b-4636-b438-6d4c251fcb77",
+      "name": "MALLORY"
+    },
+    {
+      "parameters": {
+        "content": "## About \n\nThis captures all Slack messages. \n\nThe mallory agent is only called when a message is sent in the mallory channel in Slack.",
+        "height": 180,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        200
+      ],
+      "id": "06872f64-57fb-4a3a-b0e4-b64669c18833",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appLQMSOoPBP1XFpR",
+          "mode": "list",
+          "cachedResultName": "Mallory",
+          "cachedResultUrl": "https://airtable.com/appLQMSOoPBP1XFpR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTkyWl7VD2un2Km",
+          "mode": "list",
+          "cachedResultName": "playbook",
+          "cachedResultUrl": "https://airtable.com/appLQMSOoPBP1XFpR/tblTkyWl7VD2un2Km"
+        },
+        "id": "recSXy1bFLp3lAPYk",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        20
+      ],
+      "id": "f01899e0-ee43-436e-b464-23a4ea256f97",
+      "name": "get prompt"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9e186a33-0ef4-4c6b-9fd4-10acc5f0c145",
+              "leftValue": "={{ $json.body.event.text }}",
+              "rightValue": "generate proposal",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c693875-9d41-4177-bf62-f6520d77e79b",
+      "name": "filter for generate proposal"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dAGVax0SVeHwfcDf",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — ▶️ new slack message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "c51d4348-7151-4653-8409-069eeaf13fb6",
+      "name": "proposal form"
+    },
+    {
+      "parameters": {
+        "tableId": "events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "event_name",
+              "fieldValue": "={{ $json.event_name }}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "={{ $json.source }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ $json.metadata }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        420
+      ],
+      "id": "85556a3c-1418-4094-90f8-ec934e1e4bdc",
+      "name": "Supabase"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1d3331d1-3245-4437-8f2f-98867a7ae05b",
+              "name": "event_name",
+              "value": "={{ $json.body.event.type }}",
+              "type": "string"
+            },
+            {
+              "id": "7ffe704e-76eb-4221-9997-88b0e284ba13",
+              "name": "source",
+              "value": "slack",
+              "type": "string"
+            },
+            {
+              "id": "86797c8a-b491-4e18-a980-b994639013c6",
+              "name": "metadata.content",
+              "value": "={{ $json.body.event.text }}",
+              "type": "string"
+            },
+            {
+              "id": "22572b49-c01f-4416-b470-9765bc4740ee",
+              "name": "metadata.userId",
+              "value": "={{ $json.body.event.user }}",
+              "type": "string"
+            },
+            {
+              "id": "810d022b-14aa-49b1-b237-f202d4c59bf5",
+              "name": "metadata.channelType",
+              "value": "={{ $json.body.event.channel_type }}",
+              "type": "string"
+            },
+            {
+              "id": "3c056d88-bfe3-40b1-b0f5-01d6335db78a",
+              "name": "metadata.channelId",
+              "value": "={{ $json.body.event.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "760de0d3-da15-4edc-b8a2-9b0b740f6c3a",
+              "name": "metadata.eventId",
+              "value": "={{ $json.body.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -260,
+        420
+      ],
+      "id": "dfc83567-b73e-40c0-96d0-4fa9d0ba50c7",
+      "name": "set data"
+    }
+  ],
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "set content & context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Message [CAiS Internal]": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "filter for generate proposal",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "set data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set content & context": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TASK MANAGEMENT AGENT",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DATA MANAGER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set prompt, content & context": {
+      "main": [
+        [
+          {
+            "node": "MALLORY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set prompt, content & context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter for generate proposal": {
+      "main": [
+        [
+          {
+            "node": "proposal form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set data": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

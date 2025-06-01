@@ -1,0 +1,177 @@
+{
+  "name": "Daily Weather Email Report",
+  "nodes": [
+    {
+      "id": "scheduleTrigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyDay",
+              "hour": 7,
+              "minute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "httpRequest",
+      "name": "Fetch Weather",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather?q=YOUR_CITY_NAME&appid=YOUR_OPENWEATHER_API_KEY&units=metric",
+        "method": "GET",
+        "responseFormat": "json",
+        "options": {
+          "continueOnFail": true
+        }
+      }
+    },
+    {
+      "id": "weatherIf",
+      "name": "Weather Fetch Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.main }}",
+              "operation": "notEmpty"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "formatNode",
+      "name": "Format Weather Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        200
+      ],
+      "parameters": {
+        "functionCode": "// Extract weather data\nconst data = items[0].json;\nconst city = data.name;\nconst weatherDesc = data.weather && data.weather[0] && data.weather[0].description || '';\nconst temp = data.main && data.main.temp;\nconst feelsLike = data.main && data.main.feels_like;\nconst humidity = data.main && data.main.humidity;\nconst summary = `Weather in ${city}: ${weatherDesc}. Temperature: ${temp}°C, feels like ${feelsLike}°C, humidity: ${humidity}%`;\nreturn [{ json: { subject: `Daily Weather Forecast for ${city}`, body: summary } }];"
+      }
+    },
+    {
+      "id": "sendWeather",
+      "name": "Send Weather Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        200
+      ],
+      "parameters": {
+        "toEmail": "recipient@example.com",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.body }}"
+      },
+      "credentials": {
+        "gmailOAuth2Api": {
+          "id": "Vj1sBdDvMaog1TpF",
+          "name": "YOUR_GMAIL_CREDENTIALS"
+        }
+      }
+    },
+    {
+      "id": "sendError",
+      "name": "Send Error Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        850,
+        400
+      ],
+      "parameters": {
+        "toEmail": "admin@example.com",
+        "subject": "Weather Fetch Failed",
+        "text": "Failed to fetch weather data. Error: ={{ $json.error.message }}"
+      },
+      "credentials": {
+        "gmailOAuth2Api": {
+          "id": "Vj1sBdDvMaog1TpF",
+          "name": "YOUR_GMAIL_CREDENTIALS"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "scheduleTrigger": {
+      "main": [
+        [
+          {
+            "node": "httpRequest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "httpRequest": {
+      "main": [
+        [
+          {
+            "node": "weatherIf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "weatherIf": {
+      "main": [
+        [
+          {
+            "node": "formatNode",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sendError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatNode": {
+      "main": [
+        [
+          {
+            "node": "sendWeather",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": null,
+  "triggerCount": 0,
+  "meta": null
+}

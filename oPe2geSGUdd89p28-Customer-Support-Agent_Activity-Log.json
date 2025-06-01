@@ -1,0 +1,389 @@
+{
+  "name": "Customer Support Agent_Activity Log",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3-mini",
+          "mode": "list",
+          "cachedResultName": "O3-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=log: \n{{ JSON.stringify($json.intermediateSteps, null, 2) }}null"
+            },
+            {
+              "content": "=\nWrite the log in plain english. \n\n[INSTRUCTIONS]\n\n1. Read through the intermedateSteps taken by the AI Agent. \n2. Re-write the steps so that it is easier to understand.\n- the steps must be one sentence long, and not overly detailed. \n3. Indicate whether this is an error message from the agent or not. \n\n[IMPORTANT]\n\nONLY output the log steps in plain english. DO NOT output anything else.\n\nIF the input is 'null' simply output 'null'\n\n[OUTPUT REQUIREMENTS]\n- status: 'success or error'\n- steps: 'your concise, re-written version of the intermediateSteps'\n",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        280
+      ],
+      "id": "0889ae39-b843-435f-bcd1-b4cc14878c58",
+      "name": "generate log",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc3e340f-4967-457f-8b61-a9e3ead43db1",
+              "name": "status",
+              "value": "={{ $json.message.content.status }}",
+              "type": "string"
+            },
+            {
+              "id": "24f08214-509e-421f-b47f-21d32364b189",
+              "name": "steps",
+              "value": "={{ $json.message.content.steps }}",
+              "type": "string"
+            },
+            {
+              "id": "95bb3102-e547-444e-a455-ef3aab867860",
+              "name": "output",
+              "value": "={{ $('When Executed by Another Workflow').item.json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "11039e3d-eaa7-46ba-b4e9-5e314d7be7ce",
+              "name": "agent",
+              "value": "={{ $('When Executed by Another Workflow').item.json.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        280
+      ],
+      "id": "374eee03-4b45-4513-b90b-85c886f28239",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        280
+      ],
+      "id": "3ce85511-8041-4ea6-85fd-0f77a7393b0e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appvV6nOVtwKIZaVx",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent (Community)",
+          "cachedResultUrl": "https://airtable.com/appvV6nOVtwKIZaVx"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7yWJNUUYUtj3to",
+          "mode": "list",
+          "cachedResultName": "activityLog",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g/tbl7yWJNUUYUtj3to"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "output": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.output, null, 2) }}",
+            "status": "={{ $json['status'] }}",
+            "steps": "={{ $json.steps }}",
+            "stepsRaw": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.intermediateSteps, null, 2) }}",
+            "agent": "=[{{ $('set values').item.json.agent }}]"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "success",
+                  "value": "success"
+                },
+                {
+                  "name": "error",
+                  "value": "error"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "steps",
+              "displayName": "steps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "stepsRaw",
+              "displayName": "stepsRaw",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent",
+              "displayName": "agent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        280
+      ],
+      "id": "ca2ecb8e-8164-42cd-954c-9edbcafb96fd",
+      "name": "CX activityLog",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## AI Activity Logger",
+        "height": 80,
+        "width": 320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "63c74633-4261-433c-925f-5d312ba11d9a",
+      "name": "Title"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\n\nThis workflow records the AI agent’s activity. When another workflow triggers it, the steps are rewritten in plain English, tagged as success or error, and saved to the activityLog table in Airtable for easy review.",
+        "height": 200,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -340,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "94912ac9-6c86-4112-9f62-d38387211402",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "content": "Runs when called by any workflow.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        20,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "9ac79290-4aea-4c5b-931c-06d82a045491",
+      "name": "Trigger note"
+    },
+    {
+      "parameters": {
+        "content": "OpenAI turns raw steps into short text.",
+        "height": 60,
+        "width": 220,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "0f59d5b1-79bc-4a77-a42c-11d31acc469a",
+      "name": "Generate log note"
+    },
+    {
+      "parameters": {
+        "content": "Prepares data for Airtable.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        580,
+        440
+      ],
+      "typeVersion": 1,
+      "id": "e564e64c-e2c0-4fef-977c-dbf4140054ea",
+      "name": "Set values note"
+    },
+    {
+      "parameters": {
+        "content": "Creates a row in Airtable activityLog.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        780,
+        440
+      ],
+      "typeVersion": 1,
+      "id": "92eb66c4-b982-48d6-b8c9-07ebbc602b2b",
+      "name": "Airtable note"
+    }
+  ],
+  "connections": {
+    "generate log": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "CX activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "generate log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "output": {
+            "category": "Feature Request",
+            "label": [
+              "event scheduling",
+              "VIP hangout sessions"
+            ]
+          },
+          "intermediateSteps": [],
+          "error": null
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

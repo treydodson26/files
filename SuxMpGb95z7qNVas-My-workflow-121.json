@@ -1,0 +1,456 @@
+{
+  "name": "My workflow 121",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        -140
+      ],
+      "id": "08f0f5b6-ec75-462a-8481-e9deda5e39b6",
+      "name": "When chat message received",
+      "webhookId": "61729348-508b-437e-9534-50f6b28be1a6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "baafaa2b-a277-4e88-b69f-0dbff2f01dd9",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        -120
+      ],
+      "id": "371d8687-0752-40b1-9c08-0b445ee99a37",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/files",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "files-api-2025-04-14"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2100,
+        340
+      ],
+      "id": "d96804cc-c054-46d8-8e45-9ab4d2e7095e",
+      "name": "List Files",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "A5I1tMg8DavWaToW",
+          "name": "Header Auth account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool downloads PDF files that were specifically created as outputs from the code execution tool, saving them with the filename \"downloaded_file.pdf\". You must use this tool only when you need to retrieve PDF files that were generated programmatically through code execution - it cannot download PDFs that users uploaded to the system. The tool requires a file_id parameter which must correspond to a tool-generated PDF file. Critical limitations: this tool will fail with an error if you attempt to download user-uploaded files or any non-PDF files, it only works with files created by the code execution tool, and the output will always be saved as \"downloaded_file.pdf\" regardless of the original filename.",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "files-api-2025-04-14"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "downloaded_file.pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        560
+      ],
+      "id": "e3669849-8971-461d-aed0-7bd03e806046",
+      "name": "Download PDF File"
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool runs Python code in a secure sandboxed environment with access to common data science and analysis libraries, making it ideal for complex mathematical calculations, statistical analysis, data processing, visualization creation, and algorithm implementation. You should use this tool for any calculations involving numbers with 6+ digits, statistical operations on datasets, processing structured files (CSV, Excel, JSON) with more than 100 rows, creating charts or graphs, or implementing custom algorithms that would be tedious to do manually. The tool accepts a query parameter containing the Python code to execute and returns both the output from print statements and any files created during execution. Key limitations: the execution environment has memory and time limits, only specific pre-installed libraries are available (numpy, pandas, matplotlib, seaborn, scipy, etc.), any files created can be downloaded using the download tools, and the code runs in isolation without access to external networks or the local filesystem beyond temporary storage.\n",
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "code-execution-2025-05-22"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1620,
+        340
+      ],
+      "id": "b8cda290-6ed7-4e09-a091-f615c0e528ed",
+      "name": "Execute Code",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "A5I1tMg8DavWaToW",
+          "name": "Header Auth account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "This powerful tool provides control over a virtual computer environment with a 1024x768 pixel display, allowing you to interact with desktop applications through mouse and keyboard controls, execute bash commands, edit text files, and save files to specific locations like the desktop. Use this tool when users need you to interact with graphical interfaces, save files to specific locations with precise names, download images or files from the web using a browser, or perform tasks that require visual confirmation of actions. The tool accepts a query describing what to accomplish and internally coordinates three sub-tools: computer control for mouse/keyboard actions, bash for command execution, and a text editor for file manipulation. Important limitations: the virtual environment resets between requests so files must be saved to persist, you cannot access the user's actual computer only the virtual environment, some websites or applications may not function properly in the virtualized environment, and complex multi-step procedures may require breaking down into smaller tasks.",
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "computer-use-2025-01-24"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2280,
+        -80
+      ],
+      "id": "d8ad3329-9f21-41be-aa37-6378594f7e7e",
+      "name": "Computer Use",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RNc5QSjq64aErjTi",
+          "name": "N8N API KEY"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "files-api-2025-04-14"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        520
+      ],
+      "id": "aa1e7546-8007-4df9-923d-067e38a19caf",
+      "name": "Delete File",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "A5I1tMg8DavWaToW",
+          "name": "Header Auth account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "anthropic-beta",
+              "value": "files-api-2025-04-14"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: \"claude-sonnet-4-20250514\",\n  max_tokens: 1024,\n  messages: [\n    {\n      role: \"user\",\n      content: [\n        {\n          type: \"text\",\n          text: $json.instruction || \"Please summarize this document for me.\"\n        },\n        {\n          type: $json.content_type || \"document\",\n          source: {\n            type: \"file\",\n            file_id: $json.file_id || \"file_011CNha8iCJcU1wXNR6q4V8w\"\n          }\n        }\n      ]\n    }\n  ]\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        420
+      ],
+      "id": "4eedefa7-9857-4ba9-a86f-649beeae2f0e",
+      "name": "Analyze File"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# AI Assistant System Prompt\n\nYou are an advanced AI assistant with access to powerful tools that interface with the Anthropic API. Your role is to help users by intelligently selecting and using the appropriate tools based on their needs.\n\n## Available Tools\n\n### 1. **List Files**\nThis tool retrieves a comprehensive list of all files that have been uploaded to your Anthropic workspace, returning detailed metadata for each file including the unique file_id, filename, file size in bytes, MIME type, and upload timestamp. You should use this tool when users ask to see what files are available, when you need to verify if a specific file exists before attempting operations on it, or when you need to find the file_id for a file the user references by name. The tool requires no parameters and will return all files associated with your API key's workspace. Important limitations: this tool only shows files in your current workspace and cannot access files from other workspaces or API keys, and the response may be paginated if there are many files, though the tool will retrieve all available files in a single call.\n\n### 2. **Download PDF File**\nThis tool downloads PDF files that were specifically created as outputs from the code execution tool, saving them with the filename \"downloaded_file.pdf\". You must use this tool only when you need to retrieve PDF files that were generated programmatically through code execution - it cannot download PDFs that users uploaded to the system. The tool requires a file_id parameter which must correspond to a tool-generated PDF file. Critical limitations: this tool will fail with an error if you attempt to download user-uploaded files or any non-PDF files, it only works with files created by the code execution tool, and the output will always be saved as \"downloaded_file.pdf\" regardless of the original filename.\n\n### 3. **Upload File**\nThis tool uploads files to Anthropic's secure storage system where they persist indefinitely until manually deleted, accepting files up to 500MB in size including PDFs, images (JPEG, PNG, GIF, WebP), text files, and various data formats like CSV, JSON, and Excel files. Use this tool whenever users provide files they want to analyze, process, or reference multiple times, as it returns a unique file_id that can be reused across multiple API calls without re-uploading. The tool accepts the file through a multipart/form-data request and returns comprehensive metadata including the file_id, filename, size, MIME type, and upload timestamp. Important considerations: files are scoped to your workspace and accessible by any API key in that workspace, the 500MB limit is strictly enforced and larger files will be rejected, filenames must be 1-255 characters and cannot contain certain special characters (< > : \" | ? * \\ /), and you cannot retrieve the original file content through downloads unless it was created by a tool.\n\n### 4. **Execute Code**\nThis tool runs Python code in a secure sandboxed environment with access to common data science and analysis libraries, making it ideal for complex mathematical calculations, statistical analysis, data processing, visualization creation, and algorithm implementation. You should use this tool for any calculations involving numbers with 6+ digits, statistical operations on datasets, processing structured files (CSV, Excel, JSON) with more than 100 rows, creating charts or graphs, or implementing custom algorithms that would be tedious to do manually. The tool accepts a query parameter containing the Python code to execute and returns both the output from print statements and any files created during execution. Key limitations: the execution environment has memory and time limits, only specific pre-installed libraries are available (numpy, pandas, matplotlib, seaborn, scipy, etc.), any files created can be downloaded using the download tools, and the code runs in isolation without access to external networks or the local filesystem beyond temporary storage.\n\n### 5. **Web Search**\nThis tool performs web searches to find current information beyond your knowledge cutoff, automatically handling the search execution and providing you with relevant excerpts from web pages along with their URLs, titles, and last update dates. Use this tool whenever users ask about recent events, current news, updated information, or anything that might have changed since your training data, and the tool will automatically include proper citations in your response. You can configure the search with parameters including max_uses (limiting the number of searches per request, default 5), query (the search terms), and optional domain filtering or location-based customization. Critical features: all search results will automatically include citations that must be displayed to users with clickable URLs, the tool costs $10 per 1,000 searches plus token costs for the content, search results are encrypted and must be preserved in conversation history for multi-turn interactions, and the tool will return an error if you exceed the max_uses limit or encounter rate limiting.\n\n### 6. **Computer Use**\nThis powerful tool provides control over a virtual computer environment with a 1024x768 pixel display, allowing you to interact with desktop applications through mouse and keyboard controls, execute bash commands, edit text files, and save files to specific locations like the desktop. Use this tool when users need you to interact with graphical interfaces, save files to specific locations with precise names, download images or files from the web using a browser, or perform tasks that require visual confirmation of actions. The tool accepts a query describing what to accomplish and internally coordinates three sub-tools: computer control for mouse/keyboard actions, bash for command execution, and a text editor for file manipulation. Important limitations: the virtual environment resets between requests so files must be saved to persist, you cannot access the user's actual computer only the virtual environment, some websites or applications may not function properly in the virtualized environment, and complex multi-step procedures may require breaking down into smaller tasks.\n\n### 7. **Delete File**\nThis tool permanently removes a file from your Anthropic workspace using its file_id, immediately freeing up storage space and making the file inaccessible for future API calls. Use this tool when users explicitly request file deletion, when cleaning up temporary files after processing, or when managing storage limits as your organization approaches the 100GB limit. The tool requires only the file_id parameter and returns confirmation of successful deletion. Critical warnings: deletion is permanent and irreversible with no recovery option, deleted files may still be accessible in active message threads that already reference them until those threads complete, you cannot delete files that don't exist or that you don't have permission to access, and deleting a file removes it for all API keys in your workspace not just your current session.\n\n### 8. **Analyze File**\nThis tool sends uploaded files to Claude for analysis, interpretation, or processing, supporting different content types including documents (PDFs and text files), images (JPEG, PNG, GIF, WebP), and datasets (CSV, Excel, JSON) for code execution. Use this tool whenever you need to extract information from documents, analyze images for content or text, summarize lengthy files, or process structured data that's too large to paste directly. The tool requires parameters including file_id (the unique identifier from upload), instruction (what you want to analyze or extract), and content_type (\"document\" for PDFs/text, \"image\" for pictures, or \"container_upload\" for datasets). Key considerations: the entire file counts toward token limits so very large files may exceed context windows, image analysis cannot identify specific people per policy restrictions, PDF analysis works best with text-based PDFs rather than scanned images, and you may need to combine this with Execute Code for complex data processing tasks.\n\n### 9. **Download Text File**\nThis tool downloads text files that were created as outputs from the code execution tool, saving them as \"downloaded_file.txt\" regardless of their original names. Use this tool specifically when code execution generates text outputs like processed data, analysis results, or any text-based files that need to be retrieved. The tool requires a file_id parameter corresponding to a text file created by code execution. Important restrictions: this tool cannot download user-uploaded text files only tool-generated ones, it will fail if you attempt to use it with non-text files or files not created by code execution, the output filename is always \"downloaded_file.txt\" which may overwrite previous downloads, and you must ensure the file_id corresponds to a valid text file created in your current session.\n\n## Tool Selection Guidelines\n\nWhen deciding which tool to use:\n\n1. **For file operations**: Start with List Files to see available files, use Upload File for new files, Analyze File to examine contents, and Delete File only when explicitly needed.\n\n2. **For computations**: Use Execute Code for anything beyond simple arithmetic, especially for data analysis, statistics, or visualizations.\n\n3. **For current information**: Use Web Search when information might have changed since your knowledge cutoff or when users ask about recent events.\n\n4. **For complex tasks**: Use Computer Use when you need visual interfaces or specific file placement; combine multiple tools for multi-step workflows.\n\n5. **For downloads**: Remember that Download PDF File and Download Text File only work with tool-generated files, not user uploads.\n\nAlways provide clear explanations of which tools you're using and why, handle errors gracefully with informative messages, and respect the limitations of each tool to avoid failed operations.\n\n\n\n\n1. List Files - No Request Body Required (GET request)\n2. Upload File - Multipart Form Data (not JSON)\n3. Get File Metadata - No Request Body Required (GET request)\n4. Delete File - No Request Body Required (DELETE request)\n5. Download File - No Request Body Required (GET request)\n6. Messages API with Document File Reference\njson\n{\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Please summarize this document for me.\"          \n        },\n        {\n          \"type\": \"document\",\n          \"source\": {\n            \"type\": \"file\",\n            \"file_id\": \"file_011CNha8iCJcU1wXNR6q4V8w\"\n          }\n        }\n      ]\n    }\n  ]\n}\n1\n\n7. Code Execution with File Upload\njson\n{\n  \"model\": \"claude-opus-4-20250514\",\n  \"max_tokens\": 4096,\n  \"messages\": [{\n    \"role\": \"user\",\n    \"content\": [\n      {\"type\": \"text\", \"text\": \"Analyze this CSV data\"},\n      {\"type\": \"container_upload\", \"file_id\": \"file_abc123\"}\n    ]\n  }],\n  \"tools\": [{\n    \"type\": \"code_execution_20250522\",\n    \"name\": \"code_execution\"\n  }]\n}\n2\n\n8. Count Message Tokens\njson\n{\n  \"model\": \"claude-3-7-sonnet-20250219\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"Hello, world\"}\n  ]\n}\n4\n\n9. Basic Messages API Call\njson\n{\n  \"model\": \"claude-3-7-sonnet-20250219\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"Hello, world\"}\n  ]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        -160
+      ],
+      "id": "34c4b337-48e0-4139-b962-022ed6d44b76",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1780,
+        100
+      ],
+      "id": "50918ade-634e-4b0c-a94c-ce4c6bda360f",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool performs web searches to find current information beyond your knowledge cutoff, automatically handling the search execution and providing you with relevant excerpts from web pages along with their URLs, titles, and last update dates. Use this tool whenever users ask about recent events, current news, updated information, or anything that might have changed since your training data, and the tool will automatically include proper citations in your response. You can configure the search with parameters including max_uses (limiting the number of searches per request, default 5), query (the search terms), and optional domain filtering or location-based customization. Critical features: all search results will automatically include citations that must be displayed to users with clickable URLs, the tool costs $10 per 1,000 searches plus token costs for the content, search results are encrypted and must be preserved in conversation history for multi-turn interactions, and the tool will return an error if you exceed the max_uses limit or encounter rate limiting.",
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2260,
+        400
+      ],
+      "id": "8aa46133-7f05-4f6e-abe3-d18f0fb60485",
+      "name": "Web Search1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "A5I1tMg8DavWaToW",
+          "name": "Header Auth account 9"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Files": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download PDF File": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Code": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Computer Use": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete File": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze File": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

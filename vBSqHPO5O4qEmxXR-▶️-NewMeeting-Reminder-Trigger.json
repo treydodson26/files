@@ -1,0 +1,187 @@
+{
+  "name": "▶️ NewMeeting Reminder Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appuiymaRgMhwECy8",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tblnQLOSwJO3bJbZG",
+          "mode": "id"
+        },
+        "triggerField": "generateReminder",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9252fe5f-dff2-4b2e-b84d-2c28717cb76f",
+      "name": "generate reminder"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appuiymaRgMhwECy8",
+          "mode": "list",
+          "cachedResultName": "Sales Agent (demo)",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLCeYjyxPODQRB3",
+          "mode": "list",
+          "cachedResultName": "prompts",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8/tblLCeYjyxPODQRB3"
+        },
+        "id": "reckvv5PK63v0Dk4e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        200,
+        0
+      ],
+      "id": "c590d180-2648-4802-85ae-f0385a59565e",
+      "name": "get prompt"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "AUF9Ps3FJea1MaxX",
+          "mode": "list",
+          "cachedResultName": "🟦 Demos — 🤖 SALES AGENT (demo)"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "d576f44a-58a9-441e-b7b1-7fa2f5290280",
+      "name": "SALES AGENT (demo)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db05f88e-32fe-4dbf-a0c7-1b5640df91af",
+              "name": "content.attendees",
+              "value": "={{ $('generate reminder').item.json.fields.attendees }}",
+              "type": "array"
+            },
+            {
+              "id": "0e12b3f3-2545-4043-9fc0-554bfb5a8ae4",
+              "name": "content.startDate",
+              "value": "={{ $('generate reminder').item.json.fields.startDate }}",
+              "type": "string"
+            },
+            {
+              "id": "763432fe-679b-4350-9872-72694be29da1",
+              "name": "content.eventId",
+              "value": "={{ $('generate reminder').item.json.fields.eventId }}",
+              "type": "string"
+            },
+            {
+              "id": "440cc102-9abb-4fc5-a149-883c67daf460",
+              "name": "content.name",
+              "value": "={{ $('generate reminder').item.json.fields.name }}",
+              "type": "string"
+            },
+            {
+              "id": "8e5b410e-fea7-4d9f-b8ba-e834459ac77f",
+              "name": "content.description",
+              "value": "={{ $('generate reminder').json.fields.description }}",
+              "type": "string"
+            },
+            {
+              "id": "c61e075e-bed5-4b10-8e2b-49fdf7f09e6a",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "fa087379-c73b-4d13-8377-fb9d83da0964",
+              "name": "context.airtableId",
+              "value": "={{ $('generate reminder').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "957933d6-0b62-408c-87a9-f8a9b22b517a",
+      "name": "set prompt, content, & context"
+    }
+  ],
+  "connections": {
+    "generate reminder": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set prompt, content, & context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set prompt, content, & context": {
+      "main": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

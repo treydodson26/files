@@ -1,0 +1,458 @@
+{
+  "name": "🤖SALES SUPER AGENT",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8b4dca78-9aa0-4a60-96a5-369fe639e1bc",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "model": "o1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        320
+      ],
+      "id": "e6f2121a-5a75-43d7-9eca-008e6f0f0e69",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n# CONTENT\n\n{{ $json.content.toJsonString() }}\n\n# CONTEXT (if any exists)\n",
+        "options": {
+          "systemMessage": "={{ $json.prompt }}",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f2af1abc-ec88-4dfe-8546-1975d695cba9",
+      "name": "SALES AGENT (demo)",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "name": "scrape_linkedin",
+        "description": "Call this tool to scrape LinkedIn profiles.",
+        "workflowId": {
+          "__rl": true,
+          "value": "fuy2p7HLtMeMoBVs",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🛠️ scrape linkedin [sales]"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "linkedinUrl",
+              "stringValue": "={{ $json.content.linkedinUrl }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        840,
+        320
+      ],
+      "id": "793388c6-7678-412b-ba7d-af071a7f6e30",
+      "name": "scrape linkedin"
+    },
+    {
+      "parameters": {
+        "name": "scrape_website",
+        "description": "Call this tool to scrape websites.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ESRwSnJ9abkVysJw",
+          "mode": "id"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "websiteUrl",
+              "stringValue": "={{ $json.content.websiteUrl }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        320
+      ],
+      "id": "77c9a8af-8e98-450c-81ed-7955272d2e54",
+      "name": "scrape website"
+    },
+    {
+      "parameters": {
+        "name": "update_contact_record",
+        "description": "Call this tool to update a contact record in HubSpot.",
+        "workflowId": {
+          "__rl": true,
+          "value": "9vCUzPINly7HFmR0",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🛠️ update contact record HubSpot [sales]"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "type": "objectValue",
+              "objectValue": "={{ $json.content }}"
+            },
+            {
+              "name": "context",
+              "type": "objectValue",
+              "objectValue": "={{ $json.context }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"about\": {\n      \"type\": \"string\",\n      \"description\": \"Information about the contact, taken from LinkedIn\"\n    },\n    \"websiteSummary\": {\n      \"type\": \"string\",\n      \"description\": \"Information about the company, taken from the website\"\n    }\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        320
+      ],
+      "id": "4b39fd0c-6af9-4c30-a73a-ce9e0a98fe9b",
+      "name": "update contact record"
+    },
+    {
+      "parameters": {
+        "name": "search_contact_record",
+        "description": "Call this tool to search for contact records in our HubSpot CRM.",
+        "workflowId": {
+          "__rl": true,
+          "value": "dCK3xBr3EtsNf1vR",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🛠️ search contact records [sales]"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "attendees",
+              "type": "arrayValue",
+              "arrayValue": "={{ $json.content.attendees }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        280,
+        320
+      ],
+      "id": "d3bf7afd-e979-4396-8b35-3a090f0d3198",
+      "name": "search contact record"
+    },
+    {
+      "parameters": {
+        "name": "update_airtable_record",
+        "description": "Call this tool to update Airtable records.",
+        "workflowId": {
+          "__rl": true,
+          "value": "SHbOngQ3RXhfGdAe",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🛠️ update airtable record [sales]"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "id",
+              "stringValue": "={{ $json.context.airtableId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        320
+      ],
+      "id": "e1b296ff-12ec-4702-abd2-8df8d58eb3e3",
+      "name": "update airtable record"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "708bcb2e-08c5-4057-8c5b-47095b10d78f",
+              "name": "output",
+              "value": "={{ $json.output }}{{ $json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "06efd7a7-df10-448d-a102-202827647b9a",
+              "name": "agent",
+              "value": "SALES AGENT",
+              "type": "string"
+            },
+            {
+              "id": "2b9198b3-8339-4253-bbea-b05a7cf5fd55",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps ? $json.intermediateSteps.toJsonString() : \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        620,
+        0
+      ],
+      "id": "8fca71ea-fdf7-4af7-8488-c1fa6fcedfb1",
+      "name": "set log details"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "fL8ffr9tG3k9wwP4",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — ⚫️ activityLog (sales demo) [sales]"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        0
+      ],
+      "id": "520de862-48db-440f-ac8f-afcc09092301",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "name": "gmail_agent",
+        "description": "Call this tool to perform email actions such as generating a follow up email draft, sending a new email, replying to an email thread, labeling an email, etc. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "APY31sv495bvX87O",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 GMAIL AGENT (demo) [sales]"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ $json.content }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"action\"],\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"note\": \"Provide the action to perform, such as 'Create a draft' or 'Send an email'.\",\n      \"value\": \"Create a draft\"\n    },\n    \"parameters\": {\n      \"type\": \"object\",\n      \"note\": \"Provide the necessary details for the email action.\",\n      \"properties\": {\n        \"senderEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The email address of the sender.\",\n          \"value\": \"sender@example.com\"\n        },\n        \"recipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The recipient's email addresses, separated by commas if multiple.\",\n          \"value\": \"recipient1@example.com,recipient2@example.com\"\n        },\n        \"ccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"CC email addresses, separated by commas if multiple.\",\n          \"value\": \"cc@example.com\"\n        },\n        \"bccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"BCC email addresses, separated by commas if multiple.\",\n          \"value\": \"bcc@example.com\"\n        },\n        \"subject\": {\n          \"type\": \"string\",\n          \"note\": \"The subject of the email.\",\n          \"value\": \"Meeting Follow-Up\"\n        },\n        \"body\": {\n          \"type\": \"string\",\n          \"note\": \"The content of the email.\",\n          \"value\": \"Hi Team,\\n\\nThank you for attending the meeting. Here are the action items:\\n\\n1. Follow up on the project.\\n2. Schedule the next meeting.\\n\\nBest regards,\\nJohn\"\n        },\n        \"messageId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the message (useful for replying or forwarding).\",\n          \"value\": \"12345abcdef\"\n        },\n        \"labelId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the label to associate with the message.\",\n          \"value\": \"label_001\"\n        },\n        \"replyToSenderOnly\": {\n          \"type\": \"boolean\",\n          \"note\": \"Set to true if replying only to the sender.\",\n          \"value\": true\n        },\n        \"search\": {\n          \"type\": \"string\",\n          \"note\": \"A search query for finding messages.\",\n          \"value\": \"project updates\"\n        },\n        \"readStatus\": {\n          \"type\": \"string\",\n          \"note\": \"The read status of the email ('unread', 'read', or 'both').\",\n          \"value\": \"unread\"\n        },\n        \"receivedAfter\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received after this date (ISO 8601 format).\",\n          \"value\": \"2024-01-01T00:00:00Z\"\n        },\n        \"receivedBefore\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received before this date (ISO 8601 format).\",\n          \"value\": \"2024-12-31T23:59:59Z\"\n        },\n        \"senderName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the sender.\",\n          \"value\": \"John Doe\"\n        },\n        \"newLabelName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the new label to create.\",\n          \"value\": \"Important\"\n        },\n        \"threadId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the email thread.\",\n          \"value\": \"thread_001\"\n        },\n        \"draftId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the draft.\",\n          \"value\": \"draft_123\"\n        },\n        \"maxResults\": {\n          \"type\": \"integer\",\n          \"note\": \"The maximum number of messages to retrieve (limit: 50).\",\n          \"value\": 10,\n          \"maximum\": 50\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        320
+      ],
+      "id": "2be480ca-3a84-4d8a-94a2-43e3c8bee946",
+      "name": "GMAIL AGENT"
+    },
+    {
+      "parameters": {
+        "description": "Call this workflow to generate a proposal.",
+        "workflowId": {
+          "__rl": true,
+          "value": "46mm2kepr89xI00t",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🛠️ proposal generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        980,
+        320
+      ],
+      "id": "6c3c32b7-a121-4dd2-abf1-8525a191e90c",
+      "name": "proposal generator"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SALES AGENT (demo)": {
+      "main": [
+        [
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape linkedin": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape website": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update contact record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search contact record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update airtable record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set log details": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GMAIL AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "proposal generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

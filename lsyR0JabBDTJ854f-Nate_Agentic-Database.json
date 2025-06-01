@@ -1,0 +1,260 @@
+{
+  "name": "Nate_Agentic Database",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "20c38b22-9d67-4343-8363-c82988c608df",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "database",
+          "mode": "list",
+          "cachedResultName": "database"
+        },
+        "prompt": "={{  $json.query }}",
+        "topK": 10,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a3e9292d-e240-42f4-84bd-b48cb81f1424",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "IJd4l02sahevn8Vu",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        180
+      ],
+      "id": "5008c6f0-4c38-4b6c-820f-c4250fe5063a",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "pageContent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "7e4303e8-51e4-49e7-b953-d6369aeb8077",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59fc8ebf-0de3-4b57-aff8-9223c97905ea",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1380,
+        0
+      ],
+      "id": "c5fa2640-e942-4884-b1c6-af7efd921c37",
+      "name": "response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "009af533-0049-4b4d-ac85-20a9f2c55b81",
+              "name": "pageContent",
+              "value": "={{ $json.document.pageContent }}",
+              "type": "string"
+            },
+            {
+              "id": "68d56ad7-c355-4a9f-8142-ab59b1c0ac67",
+              "name": "query",
+              "value": "={{ $('Execute Workflow Trigger').item.json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        0
+      ],
+      "id": "570a2627-9f34-4048-b69d-a0017a2dcf51",
+      "name": "set page content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Execute Workflow Trigger').item.json.query }}",
+        "options": {
+          "systemMessage": "=\nYour task is to analyze the page content to fulfill the user's query to the best of your ability. \n\nONLY OUTPUT THE DATA IF IT IS IN THE PAGE CONTENT. \n\nEnsure you give the user a comprehensive answer. \n\nThe ENTIRE company relies on you parsing the information and presenting it to our users effectively. \n\n# PAGE CONTENT\n\n{{ $json.pageContent }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "b31c97ad-6b7f-4af6-b01d-69df9db056e6",
+      "name": "agenticDatabase RAG AGENT"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        920,
+        240
+      ],
+      "id": "c42b42e5-7f06-43b2-b200-a86f63e78ebd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "A59QS4i3LDpaqgaX",
+          "name": "Google Gemini(PaLM) Api account 9"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "set page content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "agenticDatabase RAG AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set page content": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agenticDatabase RAG AGENT": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "agenticDatabase RAG AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

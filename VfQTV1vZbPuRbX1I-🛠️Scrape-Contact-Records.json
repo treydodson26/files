@@ -1,0 +1,342 @@
+{
+  "name": "🛠️Scrape Contact Records",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        200
+      ],
+      "id": "84ec2d8e-e946-41d3-b151-a12e89895c61",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "properties",
+              "renameField": true,
+              "outputFieldName": "response"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        380,
+        200
+      ],
+      "id": "5eaec1dc-e375-4ddf-ab80-1dc4894f6525",
+      "name": "aggregate response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f95ed82-a546-406b-be08-8aa56853ff6c",
+              "name": "properties",
+              "value": "={{ $json.properties }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        200
+      ],
+      "id": "c8b6b7dd-4bf9-4a42-815f-511179c42938",
+      "name": "set properties"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "operation": "search",
+        "filterGroupsUi": {
+          "filterGroupsValues": [
+            {
+              "filtersUi": {
+                "filterValues": [
+                  {
+                    "propertyName": "email|string",
+                    "value": "={{ $json.email }}"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "properties": [
+            "firstname",
+            "lastname",
+            "email",
+            "about",
+            "website_summary",
+            "company",
+            "company_size",
+            "contact_enrichment_data",
+            "contact_lead_status",
+            "hubspot_owner_id",
+            "contracts",
+            "calendly_answer_1",
+            "calendly_answer_10",
+            "calendly_answer_2",
+            "calendly_answer_3",
+            "calendly_answer_4",
+            "calendly_answer_5",
+            "calendly_answer_6",
+            "calendly_answer_7",
+            "calendly_answer_8",
+            "calendly_answer_9",
+            "jobtitle",
+            "hs_last_sales_activity_timestamp",
+            "notes_last_contacted",
+            "job_function",
+            "hs_lead_status",
+            "lifecyclestage",
+            "country"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        200
+      ],
+      "id": "3a2536b4-aed1-41b0-975c-b413348cf9a6",
+      "name": "search contacts"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ace46513-d08f-4cb5-867b-bcafaee7a40c",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        200
+      ],
+      "id": "cce3c918-3623-4c7b-958b-ef633d7c5d6a",
+      "name": "set emails"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "attendees",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        200
+      ],
+      "id": "496f2801-69dc-4a3c-9897-f4d49d80e7ee",
+      "name": "split out attendees"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51e9a735-0427-4550-a3db-d63453e96508",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "customaistudio.io",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -440,
+        200
+      ],
+      "id": "304304e3-3f54-4db7-b549-6ef054e50d51",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8a1b5281-4f05-4a05-b313-403eaa46cb90",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        200
+      ],
+      "id": "39332f28-058c-4258-ab45-535225a38693",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c355cc9-85d1-4e0c-b5e3-eb3a24512ebb",
+              "name": "response",
+              "value": "This is an internal meeting or the attendee is not in our CRM.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "76eea664-b9ff-4cb3-acc2-0a1f96fc9cb0",
+      "name": "response"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "split out attendees",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set properties": {
+      "main": [
+        [
+          {
+            "node": "aggregate response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search contacts": {
+      "main": [
+        [
+          {
+            "node": "set properties",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set emails": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split out attendees": {
+      "main": [
+        [
+          {
+            "node": "set emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "search contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

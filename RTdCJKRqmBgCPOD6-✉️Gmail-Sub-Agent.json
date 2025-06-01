@@ -1,0 +1,898 @@
+{
+  "name": "✉️Gmail Sub Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        160
+      ],
+      "id": "f624ece4-6dbb-4ea4-863c-5484ae35823b",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f394f2b-6199-47fe-8bd6-37939e4ec141",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d5122f39-b102-4a4d-9b94-6e1d4aa59072",
+      "name": "response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Execute Workflow Trigger').item.json.query.parameters.recipientEmailAddress }}",
+        "subject": "={{ $('Execute Workflow Trigger').item.json.query.parameters.subject }}",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "={{ $('Execute Workflow Trigger').item.json.query.parameters.bccRecipientEmailAddress || \"\"}}",
+          "ccList": "={{ $('Execute Workflow Trigger').item.json.query.parameters.ccRecipientEmailAddress }}",
+          "replyToSenderOnly": "={{ $('Execute Workflow Trigger').item.json.query.parameters.replyToSenderOnly }}"
+        }
+      },
+      "id": "bb408ed1-0fc4-4128-964b-dc0890cb2065",
+      "name": "Send Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -780,
+        520
+      ],
+      "webhookId": "d50fe2be-b446-441e-9300-fe1d56bcf95a"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id }}",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToSenderOnly": "={{ $json.replyToSenderOnly || \"false\" }}"
+        }
+      },
+      "id": "51d5d051-96bb-4211-b639-9cf3be02319b",
+      "name": "Reply to Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -620,
+        520
+      ],
+      "webhookId": "705e22c8-1b39-43bb-a504-147b9ab5a876"
+    },
+    {
+      "parameters": {
+        "operation": "removeLabels",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.messageId || \"\" }}",
+        "labelIds": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"SPAM\" }}"
+      },
+      "id": "6fa76120-ac2b-4544-bca9-ffb75a733c5e",
+      "name": "Remove Label from Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -460,
+        520
+      ],
+      "webhookId": "8be4a566-4aa6-4e2b-b6d2-bd7064720ff6"
+    },
+    {
+      "parameters": {
+        "operation": "markAsUnread",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.messageId || \"\" }}"
+      },
+      "id": "4bb87ff7-b44d-4c03-8070-7928b3703581",
+      "name": "Mark as Unread Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -300,
+        520
+      ],
+      "webhookId": "b4aee6a5-4545-4daf-88d2-66c67fa43fce"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.messageId || \"\" }}"
+      },
+      "id": "f13c03f4-9692-4496-a0c9-52e58de5c2bb",
+      "name": "Mark as Read Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        520
+      ],
+      "webhookId": "9c4c6b75-e5e7-4fbe-8bfb-8200355b4d14"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 25,
+        "simple": false,
+        "filters": {
+          "labelIds": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"INBOX\"}}",
+          "q": "={{ $('Execute Workflow Trigger').item.json.query.parameters.search || \"\" }}",
+          "readStatus": "={{ $('Execute Workflow Trigger').item.json.query.parameters.readStatus || \"both\" }}",
+          "receivedAfter": "={{ $('Execute Workflow Trigger').item.json.query.parameters.receivedAfter || \"\" }}",
+          "receivedBefore": "={{ $('Execute Workflow Trigger').item.json.query.parameters.receivedBefore || \"\" }}",
+          "sender": "={{ $('Execute Workflow Trigger').item.json.query.parameters.senderEmailAddress || \"$('Execute Workflow Trigger').item.json.query.parameters.senderName\" }}"
+        },
+        "options": {}
+      },
+      "id": "27c28139-ce98-4eb3-9379-68c16204198a",
+      "name": "Get Many Messages",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -20,
+        520
+      ],
+      "webhookId": "69400457-50d3-4a07-bd9e-e91902f7dbad"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.messageId || \"\" }}",
+        "simple": false,
+        "options": {}
+      },
+      "id": "5c0f6fed-c212-4142-9f68-b651d452d423",
+      "name": "Get Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        520
+      ],
+      "webhookId": "01ebf6a9-ea76-4dd4-9724-c111f0f016f4"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.messageId || \"\" }}"
+      },
+      "id": "220c9b90-23cf-4163-ab16-9a6808612ab7",
+      "name": "Delete Message",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        520
+      ],
+      "webhookId": "d21e78ee-4823-475c-94b4-38734631b152"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "id": "ad8c22cf-8217-4da5-ac80-5afcd975cf7d",
+      "name": "Get Many Labels",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -760,
+        680
+      ],
+      "webhookId": "794c82f4-13bc-4216-98b1-e26f8d957425"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "get",
+        "labelId": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"INBOX\" }}"
+      },
+      "id": "08d1bbce-54d8-4f8e-b5c9-f83abc48f316",
+      "name": "Get Label",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -620,
+        680
+      ],
+      "webhookId": "db94e5e0-0f5d-41bc-bff2-b4d4cd9b7f71"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "delete",
+        "labelId": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"\" }}"
+      },
+      "id": "336aea31-9183-4f8e-9f3c-6d36ddea24ea",
+      "name": "Delete Label",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        680
+      ],
+      "webhookId": "aeddbd46-d5b0-4ae6-acc0-57fb4581325a"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "create",
+        "name": "={{ $('Execute Workflow Trigger').item.json.query.parameters.newLabelName || \"New Label\" }}",
+        "options": {}
+      },
+      "id": "00996451-ac62-43db-853f-c66b932cece3",
+      "name": "Create Label",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -340,
+        680
+      ],
+      "webhookId": "623fa2da-3b21-49aa-96ac-a48872f91ea0"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to create a draft.",
+        "resource": "draft",
+        "subject": "={{ $('Execute Workflow Trigger').item.json.query.parameters.subject || \"New Draft\" }}",
+        "emailType": "html",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "bccList": "={{ $('Execute Workflow Trigger').item.json.query.parameters.bccRecipientEmailAddress || \"\" }}",
+          "ccList": "={{ $('Execute Workflow Trigger').item.json.query.parameters.ccRecipientEmailAddress || \"\" }}",
+          "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\"}}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}",
+          "sendTo": "={{ $('Execute Workflow Trigger').item.json.query.parameters.recipientEmailAddress }}"
+        }
+      },
+      "id": "bc487e6c-6c13-4946-8658-e5f12bee247d",
+      "name": "Create Draft",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -200,
+        680
+      ],
+      "webhookId": "d6ccc317-5003-4794-b162-18c14da45f15"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to Delete an Email Draft. You MUST have the draftId to execute this API. ",
+        "resource": "draft",
+        "operation": "delete",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.draftId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.draftId || \"\" }}"
+      },
+      "id": "70dc5389-b554-48a0-9af5-2cb16535a6f2",
+      "name": "Delete Draft",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -60,
+        680
+      ],
+      "webhookId": "44260c32-cdb5-4834-b8e7-f811f9323980"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to Get a Specific an Email Draft. You MUST have the draftId to execute this API. ",
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.draftId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.draftId || \"\" }}",
+        "options": {}
+      },
+      "id": "924509d2-dda8-4ed3-b002-32abe2125404",
+      "name": "Get Draft",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        680
+      ],
+      "webhookId": "58430e36-845d-449a-8b0a-462498815f12"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to Get Many Drafts. This tool will return 20 drafts total. ",
+        "resource": "draft",
+        "operation": "getAll",
+        "limit": 20,
+        "options": {}
+      },
+      "id": "8d391de2-ce91-40fd-92b0-4f8758e109ee",
+      "name": "Get Many Drafts",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        680
+      ],
+      "webhookId": "d15d4180-4e93-490e-83d6-2658abe7cc43"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}",
+        "labelIds": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"INBOX\"}}"
+      },
+      "id": "2cbeb643-4c20-4149-839d-99e056faffc0",
+      "name": "Add Label to Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -700,
+        840
+      ],
+      "webhookId": "4bee7613-5019-407f-bb66-5f0d218c0cc8"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "delete",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId }}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}"
+      },
+      "id": "f31acdaa-27eb-4926-b190-d3f6bdd206ba",
+      "name": "Delete Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -540,
+        840
+      ],
+      "webhookId": "ea18f476-d560-4220-9163-2f57c226c742"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "get",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\"}}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}",
+        "simple": false,
+        "options": {}
+      },
+      "id": "a3580f9f-54b5-4fe4-866f-56ab7df23aba",
+      "name": "Get Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -380,
+        840
+      ],
+      "webhookId": "3b8b11ae-68b4-409c-a4ae-feb69f8c8191"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to Get Many Threads. This API will return up to 10 threads. ",
+        "resource": "thread",
+        "limit": 10,
+        "filters": {
+          "labelIds": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"INBOX\" }}",
+          "q": "={{ $('Execute Workflow Trigger').item.json.query.parameters.search || \"\" }}",
+          "readStatus": "={{ $('Execute Workflow Trigger').item.json.query.parameters.readStatus || \"both\" }}",
+          "receivedAfter": "={{ $('Execute Workflow Trigger').item.json.query.parameters.receivedAfter || \"\" }}",
+          "receivedBefore": "={{ $('Execute Workflow Trigger').item.json.query.parameters.receivedBefore || \"\" }}"
+        }
+      },
+      "id": "689e4416-ea36-4bc6-b982-1ebacbf8a8ad",
+      "name": "Get Many Threads",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        840
+      ],
+      "webhookId": "c954a6a7-d93e-4960-8fee-4d60262d8854"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "removeLabels",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}",
+        "labelIds": "={{ $('Execute Workflow Trigger').item.json.query.parameters.labelId || \"INBOX\" }}"
+      },
+      "id": "228074f6-e196-4c1f-9122-260980d0a074",
+      "name": "Remove Label from Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -60,
+        840
+      ],
+      "webhookId": "a5943a57-00fc-4cbb-a23e-569f25b66d0b"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}",
+        "messageId": "={{ $('Execute Workflow Trigger').item.json.content.id || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.id || \"\" }}",
+        "emailType": "html",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "ccList": "={{ $('Execute Workflow Trigger').item.json.content.cc.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g).join(', ') }}"
+        }
+      },
+      "id": "35a10602-0ccf-4bf9-be28-7aeb4e040059",
+      "name": "Reply to Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        840
+      ],
+      "webhookId": "f7421791-d416-4717-be59-2362a5035d22"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "trash",
+        "threadId": "={{ $('Execute Workflow Trigger').item.json.content.threadId || \"\" }}{{ $('Execute Workflow Trigger').item.json.query.parameters.threadId || \"\" }}"
+      },
+      "id": "ac0836b6-42b6-4ae1-828e-462721af1b14",
+      "name": "Trash Thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        840
+      ],
+      "webhookId": "78aed7d7-e0e4-43a8-8b7b-5c24057633d4"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let parameters;\n\n  // Check if 'query' and 'parameters' exist in the item\n  if (item.json.query && item.json.query.parameters) {\n    parameters = item.json.query.parameters;\n  } else {\n    // If 'parameters' is not found, handle accordingly\n    return { json: item.json };\n  }\n\n  // Process 'body' if it exists\n  if (parameters.body) {\n    // Convert markdown to compact HTML\n    const bodyHtml = parameters.body\n      .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>\n      .replace(/__(.*?)__/g, '<strong>$1</strong>') // Convert __bold__ to <strong>\n      .split('\\n') // Split by line breaks\n      .filter(line => line.trim() !== '') // Remove empty lines\n      .map(line => `<p>${line}</p>`) // Wrap lines in <p>\n      .join(''); // Join all lines together\n\n    // Add 'htmlBody' to parameters\n    parameters.htmlBody = bodyHtml;\n  }\n\n  // Return the updated parameters\n  return {\n    json: {\n      ...parameters // Spread all existing parameters, including 'htmlBody' if it was added\n    }\n  };\n});\n"
+      },
+      "id": "5a59addf-c43b-4ce4-a563-987b9741753e",
+      "name": "Body HTML Formatting",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "e7f2aa8d-3248-4533-aa99-da4b0bb7b7ea",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Execute these action/s: \n\n{{ $('Execute Workflow Trigger').item.json.query.action }}\n\n",
+        "options": {
+          "systemMessage": "=\nExecute the action/s by calling your tool.\n\nYour tool will already be provided the data it needs. Your only job is to call the tool. \n\nYOU DO NOT NEED TO FILL IN THE VALUES TO EXECUTE THE ACTIONS. SIMPLY CALL THE APPROPRITE TOOL.\n---",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "df424baa-214e-47d5-a654-175663a511d4",
+      "name": "GMAIL AGENT",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -440,
+        160
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wveiDNORN7ucLyKx",
+          "mode": "list",
+          "cachedResultName": "demo - Sales — ⚫️ activityLog (sales demo)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        160
+      ],
+      "id": "bc54c268-62d0-4ebe-9fd7-65ef16945aa8",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "708bcb2e-08c5-4057-8c5b-47095b10d78f",
+              "name": "output",
+              "value": "={{ $json.output }}{{ $json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "06efd7a7-df10-448d-a102-202827647b9a",
+              "name": "agent",
+              "value": "GMAIL AGENT",
+              "type": "string"
+            },
+            {
+              "id": "2b9198b3-8339-4253-bbea-b05a7cf5fd55",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps ? $json.intermediateSteps.toJsonString() : \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        160
+      ],
+      "id": "bd3d4ad5-a913-4716-8681-c88c403dd393",
+      "name": "set log details"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Body HTML Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Label from Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Unread Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Many Messages": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Many Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Many Drafts": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label to Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Many Threads": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Label from Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trash Thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Body HTML Formatting": {
+      "main": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "GMAIL AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GMAIL AGENT": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set log details": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

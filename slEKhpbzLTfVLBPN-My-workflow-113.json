@@ -1,0 +1,291 @@
+{
+  "name": "My workflow 113",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f593a4cd-8ab2-4f4a-b954-05f29d5e9c89",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        740,
+        -140
+      ],
+      "id": "d4a4e7b7-4276-48ac-af0d-df0a9cf80f9b",
+      "name": "Webhook1",
+      "webhookId": "f593a4cd-8ab2-4f4a-b954-05f29d5e9c89"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        180
+      ],
+      "id": "bb2d2bfa-caaa-42cb-abff-afc383402359",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Converts XBRL formatted financial data from SEC filings into structured JSON. Extracts financial statements, notes, and tagged data from XBRL documents. Returns normalized JSON with financial metrics, line items, and contextual information.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `JSON containing XBRL document URL and specific sections to extract`, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1620,
+        180
+      ],
+      "id": "b07e3689-ebf6-4e83-83e8-518640254608",
+      "name": "XBRL-to-JSON Converter1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Performs full-text search across SEC filing content. Searches within document text for keywords, phrases, or specific disclosures. Supports pagination with 'from' and 'size' parameters. Returns relevant text excerpts with filing context.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Search keywords or phrases to find within filing documents`, 'string') }}"
+            },
+            {
+              "name": "from",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Starting position for pagination, default is 0`, 'string') }}"
+            },
+            {
+              "name": "size",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Number of results to return, default is 10`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        220
+      ],
+      "id": "47660cbe-2088-4310-aadf-58ab95bdf7e0",
+      "name": "Full-Text Search API1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Searches SEC filings database using structured queries. Accepts JSON with query parameters to find specific filings by company name, ticker, filing type (10-K, 10-Q, 8-K), date ranges, CIK numbers, or other filing metadata. Returns filing metadata including URLs, filing dates, and document identifiers.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `Complete query JSON including search criteria, pagination, and sorting parameters`, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1140,
+        180
+      ],
+      "id": "00c94321-9347-4989-b2cd-a9830df5b5d1",
+      "name": "Filing Query API1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Downloads SEC filing documents and converts them to PDF format. Accepts filing URLs or document identifiers from the Filing Query API results. Can download full documents or specific sections. Returns downloadable PDF links or base64 encoded PDF content.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `JSON object containing the filing URL to download and output format preferences`, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        260
+      ],
+      "id": "7bb69511-e0fa-4f1a-9091-a20ce013830b",
+      "name": "Filing Download & PDF Generator1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.query }}",
+        "options": {
+          "systemMessage": "OBJECTIVE\n\nYour objective is to process SEC filing requests by analyzing user input and routing to appropriate tools for searching, downloading, converting, and extracting data from SEC financial documents. You must determine which tools to use based on the request type and generate properly formatted JSON parameters for each tool.\n\n---\n\nCONTEXT\n\nYou are an AI agent in an n8n workflow that processes SEC filing requests. You have access to four specialized tools:\n\n1. **Filing Query API**: Search SEC EDGAR database for filings\n2. **Filing Download & PDF Generator**: Download filings and convert to PDF\n3. **Full-Text Search API**: Search within filing content\n4. **XBRL-to-JSON Converter**: Convert XBRL financial data to JSON\n\nCommon SEC Filing Types:\n- 10-K: Annual reports\n- 10-Q: Quarterly reports\n- 8-K: Current reports (material events)\n- DEF 14A: Proxy statements\n- S-1: Registration statements\n\nAPI Base URL: https://api.sec-api.io\nAll requests require token authentication (handled automatically).\n\n---\n\nINSTRUCTIONS\n\n1. **Analyze User Request**:\n   - Identify the company/ticker mentioned\n   - Determine filing type needed\n   - Identify specific data requested (financial metrics, text search, document download)\n   - Note any date constraints\n\n2. **Select Appropriate Tools**:\n   - Use Filing Query API first to find relevant filings\n   - Use Full-Text Search for content within filings\n   - Use Filing Download for PDF generation\n   - Use XBRL converter for structured financial data\n\n3. **Generate Tool Parameters**:\n\n   **Filing Query API JSON Structure**:\n   ```json\n   {\n     \"query\": {\n       \"query_string\": {\n         \"query\": \"ticker:AAPL AND formType:\\\"10-K\\\"\"\n       }\n     },\n     \"from\": \"0\",\n     \"size\": \"10\",\n     \"sort\": [{\"filedAt\": {\"order\": \"desc\"}}]\n   }\n   ```\n\n   **Full-Text Search Parameters**:\n   - query: Search terms or phrases\n   - from: Starting position (default \"0\")\n   - size: Number of results (default \"10\")\n\n   **Filing Download JSON Structure**:\n   ```json\n   {\n     \"url\": \"https://www.sec.gov/Archives/edgar/data/...\",\n     \"type\": \"pdf\"\n   }\n   ```\n\n   **XBRL Converter JSON Structure**:\n   ```json\n   {\n     \"url\": \"https://www.sec.gov/Archives/edgar/data/.../file.xml\",\n     \"sections\": [\"income_statement\", \"balance_sheet\", \"cash_flow\"]\n   }\n   ```\n\n4. **Multi-Step Processing**:\n   - Often requires chaining tools (e.g., Query → Download → Convert)\n   - Pass document URLs between tools\n   - Aggregate results when multiple filings are involved\n\n5. **Error Handling**:\n   - Validate company identifiers\n   - Check date formats (YYYY-MM-DD)\n   - Verify filing type codes\n\n---\n\nOUTPUT REQUIREMENTS\n\n- **Tool Selection**: Specify which tools to use and in what order\n- **JSON Parameters**: Generate valid JSON for each tool\n- **Result Interpretation**: Explain what data will be extracted\n- **Error Messages**: Clear feedback if request cannot be processed\n\n---\n\nEXAMPLES\n\n**Example 1: Find Latest Annual Report**\n\nUser Input: \"Get Apple's latest 10-K\"\n\nResponse:\n1. Use Filing Query API:\n```json\n{\n  \"query\": {\n    \"query_string\": {\n      \"query\": \"ticker:AAPL AND formType:\\\"10-K\\\"\"\n    }\n  },\n  \"from\": \"0\",\n  \"size\": \"1\",\n  \"sort\": [{\"filedAt\": {\"order\": \"desc\"}}]\n}\n```\n\n**Example 2: Search for Specific Content**\n\nUser Input: \"Find mentions of AI investments in Microsoft's recent filings\"\n\nResponse:\n1. First use Filing Query API to get recent Microsoft filings\n2. Then use Full-Text Search API:\n   - query: \"artificial intelligence AI investments\"\n   - from: \"0\"\n   - size: \"20\"\n\n**Example 3: Extract Financial Data**\n\nUser Input: \"Get Tesla's revenue from their latest quarterly report\"\n\nResponse:\n1. Use Filing Query API to find latest 10-Q\n2. Use XBRL Converter with income statement section\n```json\n{\n  \"url\": \"[filing_url_from_query]\",\n  \"sections\": [\"income_statement\"]\n}\n```"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1140,
+        -140
+      ],
+      "id": "d068822c-4e8a-4203-b19f-851467b8d1c7",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        -140
+      ],
+      "id": "735d6d36-d93b-494a-b572-f51e1a97a023",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XBRL-to-JSON Converter1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Full-Text Search API1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filing Query API1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filing Download & PDF Generator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

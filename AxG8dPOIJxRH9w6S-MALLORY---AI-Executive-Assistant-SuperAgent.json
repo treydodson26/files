@@ -1,0 +1,429 @@
+{
+  "name": "MALLORY - AI Executive Assistant SuperAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mallory-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhookTrigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mailFolder": "INBOX",
+        "triggerOn": "allNewMails",
+        "options": {}
+      },
+      "id": "gmailTrigger",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Normalize incoming trigger data\nconst trigger = $input.all()[0].json;\nreturn [{ json: {\n  source: trigger.source || 'webhook',\n  message: trigger.message || trigger.text || trigger.body,\n  context: {} // placeholder for RAG context lookup\n}}];"
+      },
+      "id": "mergeInput",
+      "name": "Merge Input",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.mallory.superagent/parse",
+        "jsonParameters": false,
+        "options": {},
+        "bodyParameters": [
+          {
+            "name": "input",
+            "value": "={{$node[\"Merge Input\"].json}}"
+          }
+        ]
+      },
+      "id": "malloryAgent",
+      "name": "MALLORY SuperAgent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "propertyName": "={{$node[\"MALLORY SuperAgent\"].json.intent}}",
+        "rules": {
+          "string": [
+            {
+              "value": "email"
+            },
+            {
+              "value": "calendar"
+            },
+            {
+              "value": "slack"
+            },
+            {
+              "value": "document"
+            },
+            {
+              "value": "calculate"
+            },
+            {
+              "value": "search"
+            }
+          ]
+        }
+      },
+      "id": "routeSwitch",
+      "name": "Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "toEmail": "={{$node[\"MALLORY SuperAgent\"].json.email}}",
+        "subject": "={{$node[\"MALLORY SuperAgent\"].json.subject}}",
+        "body": "={{$node[\"MALLORY SuperAgent\"].json.body}}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "gmailOAuth2Api": {
+          "id": "Vj1sBdDvMaog1TpF",
+          "name": "Gmail account"
+        }
+      },
+      "id": "gmailAgent",
+      "name": "Gmail Agent",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "upsert",
+        "calendarId": "primary",
+        "summary": "={{$node[\"MALLORY SuperAgent\"].json.summary}}",
+        "description": "={{$node[\"MALLORY SuperAgent\"].json.description}}",
+        "start": "={{$node[\"MALLORY SuperAgent\"].json.start}}",
+        "end": "={{$node[\"MALLORY SuperAgent\"].json.end}}",
+        "eventId": "={{$node[\"MALLORY SuperAgent\"].json.eventId}}"
+      },
+      "credentials": {
+        "googleCalendar": {
+          "id": "ukOyg5Z7ZU8SXHoy",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "calendarAgent",
+      "name": "Calendar Agent",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "={{$node[\"MALLORY SuperAgent\"].json.channel}}",
+        "text": "={{$node[\"MALLORY SuperAgent\"].json.message}}",
+        "blocksUi": "",
+        "username": "Mallory Bot",
+        "iconEmoji": ":robot_face:"
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "3",
+          "name": "Slack Account"
+        }
+      },
+      "id": "slackAgent",
+      "name": "Slack Agent",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "fileName": "={{$node[\"MALLORY SuperAgent\"].json.fileName}}",
+        "binaryData": "file",
+        "parents": "={{[$node[\"MALLORY SuperAgent\"].json.folderId]}}"
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0Q2VAFJIwu8ZIrUH",
+          "name": "Google Drive account"
+        }
+      },
+      "id": "driveAgent",
+      "name": "Drive Agent",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.calculator.local/compute",
+        "jsonParameters": false,
+        "options": {},
+        "bodyParameters": [
+          {
+            "name": "expression",
+            "value": "={{$node[\"MALLORY SuperAgent\"].json.expression}}"
+          }
+        ]
+      },
+      "id": "calculatorAgent",
+      "name": "Calculator Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.tavily.ai/search",
+        "jsonParameters": false,
+        "options": {},
+        "bodyParameters": [
+          {
+            "name": "query",
+            "value": "={{$node[\"MALLORY SuperAgent\"].json.query}}"
+          }
+        ]
+      },
+      "id": "tavilyAgent",
+      "name": "Tavily Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://logging.workflow.studio/log",
+        "jsonParameters": false,
+        "options": {},
+        "bodyParameters": [
+          {
+            "name": "log",
+            "value": "={{$node[\"MALLORY SuperAgent\"].json}}"
+          }
+        ]
+      },
+      "id": "activityLog",
+      "name": "Activity Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "webhookTrigger": {
+      "main": [
+        [
+          {
+            "node": "mergeInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gmailTrigger": {
+      "main": [
+        [
+          {
+            "node": "mergeInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mergeInput": {
+      "main": [
+        [
+          {
+            "node": "malloryAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "malloryAgent": {
+      "main": [
+        [
+          {
+            "node": "routeSwitch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "routeSwitch": {
+      "main": [
+        [
+          {
+            "node": "gmailAgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "calendarAgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "slackAgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "driveAgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "calculatorAgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "tavilyAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gmailAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendarAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "slackAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "driveAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calculatorAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tavilyAgent": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": null,
+  "triggerCount": 0,
+  "meta": null
+}

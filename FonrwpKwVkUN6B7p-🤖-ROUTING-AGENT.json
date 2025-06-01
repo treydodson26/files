@@ -1,0 +1,402 @@
+{
+  "name": "🤖 ROUTING AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n# CONTENT\n\n{{ JSON.stringify($('set name & description').first().json.content, null, 2) }}\n\n# PLAYBOOK\n\n{{ JSON.stringify($json.data, null, 2) }}",
+        "options": {
+          "systemMessage": "=\nYour primary objective is to analyze the incoming messages and identify which 'prompt' makes the most sense to run.\n\nFor context, your assistant will follow the instructions in the prompt. It is your job to passthrough the correct instructions ('prompt') to your assistant. \n\nYou and your assistant work for the Recruiting Team for our company. Your assistant handles tasks like candidate sourcing, interview scheduling, candidate screening, and database management. \n\n# WORKFLOW STEPS\n\n1. Analyze the incoming data.\n2. Review your 'playbook' and determine which prompt makes the most sense run. \n3. Output the 'recordId' of the prompt that needs to run. \n4. End workflow. \n\n# OUTPUT REQUIREMENTS\n\n- Only output the recordId. DO NOT OUTPUT ANYTHING ELSE.\n- DO NOT add quotes or spaces, only output the id.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -600,
+        140
+      ],
+      "id": "501d3b21-a3b6-4bbf-8687-64df691d400b",
+      "name": "routingAgent",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        400
+      ],
+      "id": "5816284c-34db-41ad-b5ac-30fc7f51d720",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "A59QS4i3LDpaqgaX",
+          "name": "Google Gemini(PaLM) Api account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appHuUo6uOB5cuw0U",
+          "mode": "list",
+          "cachedResultName": "Recruitment Super Agent",
+          "cachedResultUrl": "https://airtable.com/appHuUo6uOB5cuw0U"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblDb9kfqcjtGN2b4",
+          "mode": "list",
+          "cachedResultName": "playbook (roadmap)",
+          "cachedResultUrl": "https://airtable.com/appHuUo6uOB5cuw0U/tblDb9kfqcjtGN2b4"
+        },
+        "options": {
+          "fields": [
+            "name",
+            "description",
+            "recordId"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1260,
+        140
+      ],
+      "id": "12045ce0-ed64-4f2f-88ac-3007f35fb83f",
+      "name": "get playbook",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "HgBNojiI1VFCYKdV",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — RECRUITMENT SUPER AGENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        -80
+      ],
+      "id": "de05a6e5-ed23-4a00-a854-f182983a864a",
+      "name": "RECRUITING AGENT (demo)"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1480,
+        140
+      ],
+      "id": "9dd9e3b4-bc2e-401c-b7a6-6928d6a69477",
+      "name": "new event"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "recordId, name, description",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        140
+      ],
+      "id": "1b4b8bba-3056-4798-b46b-cacbccfd3997",
+      "name": "aggregate playbook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b367ce41-2160-4e90-bd75-47b6c87410c9",
+              "name": "recordId",
+              "value": "={{ $json.recordId }}",
+              "type": "string"
+            },
+            {
+              "id": "9fc6c5cb-c4a0-4111-93cf-b52b2af7a12e",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "ff90d3ad-eb51-48b3-a9e6-7283bffe1898",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "35462096-908a-42e5-909d-cf31c34ea517",
+              "name": "content",
+              "value": "={{ $('new event').item.json.content }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1040,
+        140
+      ],
+      "id": "3a3ee3d6-b103-4e17-866d-29482c972a20",
+      "name": "set name & description"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39ff3b4f-4653-43b8-9a9a-3fb1fd4bc6a6",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "a8b2ac81-1904-46bd-b967-0ca84e8e4828",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "27c01ce0-d673-4a7b-bb89-8b2674fb7e9a",
+              "name": "agent",
+              "value": "=ROUTING AGENT",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        300
+      ],
+      "id": "0aa16c3f-68a1-4544-820a-e81eb9100065",
+      "name": "set log values"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VjAqQkjLUPCmxNtV",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — 🛠️Activity Log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        300
+      ],
+      "id": "e99379b6-1885-4a7f-bd74-0a02c3a42bb8",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef266047-a346-48b0-b3de-538f1ed44dd1",
+              "name": "promptId",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "9089b5cf-af9f-4aca-8b63-b389e3da6531",
+              "name": "content",
+              "value": "={{ $('set name & description').first().json.content }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "8ef72d48-88d5-41c6-b838-cd881b16a3bf",
+      "name": "set promptId & content"
+    }
+  ],
+  "connections": {
+    "routingAgent": {
+      "main": [
+        [
+          {
+            "node": "set promptId & content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "set log values",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set log values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "routingAgent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get playbook": {
+      "main": [
+        [
+          {
+            "node": "set name & description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new event": {
+      "main": [
+        [
+          {
+            "node": "get playbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate playbook": {
+      "main": [
+        [
+          {
+            "node": "routingAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set name & description": {
+      "main": [
+        [
+          {
+            "node": "aggregate playbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set log values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set promptId & content": {
+      "main": [
+        [
+          {
+            "node": "RECRUITING AGENT (demo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "new event": [
+      {
+        "json": {
+          "content": {
+            "fullName": "Cassandra Nickels",
+            "description": "Paralegal · Experience: New Mexico Financial & Family Law · Education: The University of New Mexico · Location: Albuquerque. View Cassandra Nickels' profile",
+            "headline": "Cassandra Nickels - Paralegal - New Mexico Financial & Family ...",
+            "status": "new",
+            "email": null
+          }
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "name": "🛠️ Scrape LinkedIN",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "09bcc61d-2354-4c98-a899-ddacb72031bf",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// This gets the incoming items from the previous node\nconst items = $input.all();  // Fetch all items from the previous node\n\n// Function to clean the content and extract only the relevant information from experiences\nfunction extractExperienceDetails(experience) {\n  const title = experience.title || 'Unknown Role';\n  const company = experience.company || 'Unknown Company';\n  const startYear = experience.start_year || 'Unknown Start Year';\n  const endYear = experience.is_current ? 'Present' : (experience.end_year || 'Unknown End Year');  // Handles current roles\n  const duration = experience.duration || '';\n\n  return `${title} at ${company} (${startYear} - ${endYear}) - ${duration}`.trim();\n}\n\n// Initialize an array to store the cleaned data\nlet returnData = [];\n\n// Process each item dynamically based on the input from the previous node\nfor (let i = 0; i < items.length; i++) {\n  const data = items[i].json.data || {};  // Get the main data object from the item, fallback to an empty object if undefined\n  const about = data.about || '';         // Get the 'about' section content, fallback to an empty string if undefined\n  const headline = data.headline || '';   // Get the headline content, fallback to an empty string if undefined\n  const experiences = data.experiences || [];  // Get the experiences array, fallback to an empty array if undefined\n\n  // Clean the content from 'about' and 'headline' sections\n  const cleanedAbout = about.replace(/\\n+/g, ' ').trim();\n  const cleanedHeadline = headline.replace(/\\n+/g, ' ').trim();\n\n  // Clean and extract key details (role, company, years) from each experience\n  let cleanedExperiences = experiences.map(exp => extractExperienceDetails(exp));\n\n  // Identify the current position (if any), using \"-present\" in the experience\n  let currentPosition = null;\n  for (let exp of experiences) {\n    if (exp.is_current) {\n      const title = exp.title || 'Unknown Role';\n      const company = exp.company || 'Unknown Company';\n      const startYear = exp.start_year || 'Unknown Start Year';\n      currentPosition = `${title} at ${company} (${startYear} - Present)`;\n      break;  // Assuming only one current position, so we can exit after finding it\n    }\n  }\n\n  // Push the cleaned content into the return data array inside the 'response' -> 'scraped_linkedin_info' field\n  returnData.push({\n    json: {\n      response: {\n        scraped_linkedin_info: {\n          cleanedAbout: cleanedAbout,\n          cleanedHeadline: cleanedHeadline,\n          cleanedExperiences: cleanedExperiences,\n          currentPosition: currentPosition // Add current position information\n        }\n      }\n    }\n  });\n}\n\n// Return the cleaned data to n8n\nreturn returnData;\n"
+      },
+      "id": "1126b84d-ce95-43e4-9bfa-6d7a07477607",
+      "name": "clean data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://fresh-linkedin-profile-data.p.rapidapi.com/get-linkedin-profile?linkedin_url={{ $json.linkedinUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "fresh-linkedin-profile-data.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "abf59ed2-8760-40ad-873c-cce4231f53d7",
+      "name": "scrape linkedin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "scrape linkedin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape linkedin": {
+      "main": [
+        [
+          {
+            "node": "clean data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

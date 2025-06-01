@@ -1,0 +1,99 @@
+{
+  "name": "🛠️ Update CRM Record",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        -80
+      ],
+      "id": "5fcc7ebe-3976-47cc-bb42-288f64e496a2",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb1f3d5d-9ab7-4590-b98d-5fa249c23ff3",
+              "name": "response",
+              "value": "The contact record has been successfully updated!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        -80
+      ],
+      "id": "b5c91564-dfc6-4378-8dfb-435f5d0dc031",
+      "name": "response"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "email": "={{ $json.content.email }}",
+        "additionalFields": {
+          "customPropertiesUi": {
+            "customPropertiesValues": [
+              {
+                "property": "about",
+                "value": "={{ $json.query.about }}"
+              },
+              {
+                "property": "website_summary",
+                "value": "={{ $json.query.websiteSummary }}"
+              }
+            ]
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        -80
+      ],
+      "id": "656ec685-13a3-49e6-b44c-aca2ab51a98a",
+      "name": "update contact record"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "update contact record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update contact record": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

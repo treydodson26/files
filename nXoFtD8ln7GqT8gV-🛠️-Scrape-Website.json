@@ -1,0 +1,100 @@
+{
+  "name": "🛠️ Scrape Website",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3f2536ff-62a2-4707-9b18-2a07b44b0357",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-content-scraper.p.rapidapi.com/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-rapidapi-host",
+              "value": "ai-content-scraper.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "204438e6-96de-43bc-b5ba-1085b45b1500",
+      "name": "scrape_website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// This gets the incoming items from the previous node\nconst items = $input.all();  // Fetch all items from the previous node\n\n// Function to clean the content by removing markdown and unwanted elements\nfunction cleanContent(content) {\n  // Example: Removing markdown image syntax, excessive newlines, and trimming the content\n  return content\n    .replace(/!\\[.*?\\]\\(.*?\\)/g, '')  // Removes markdown images\n    .replace(/\\n+/g, '\\n')            // Replaces multiple newlines with a single newline\n    .trim();                          // Trims any leading or trailing spaces\n}\n\n// Initialize an array to store the cleaned data\nlet returnData = [];\n\n// Process each item dynamically based on the input from the previous node\nfor (let i = 0; i < items.length; i++) {\n  const content = items[i].json.content || '';         // Get content, fallback to empty string if undefined\n  const description = items[i].json.description || ''; // Get description, fallback to empty string if undefined\n  \n  const cleanedContent = cleanContent(content);  // Clean the content\n\n  // Push the cleaned content and description into the return data array\n  returnData.push({\n    json: {\n      cleanedContent: cleanedContent,\n      description: description\n    }\n  });\n}\n\n// Return the cleaned data to n8n\nreturn returnData;\n"
+      },
+      "id": "9cc5ac74-fef7-4c82-b635-67c4db42beb3",
+      "name": "clean data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "scrape_website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape_website": {
+      "main": [
+        [
+          {
+            "node": "clean data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

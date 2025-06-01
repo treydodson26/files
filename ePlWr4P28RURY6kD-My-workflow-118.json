@@ -1,0 +1,1711 @@
+{
+  "name": "My workflow 118",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        160
+      ],
+      "id": "3b80754f-aba5-4dc9-bff8-87b2c758495b",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9wnKL7Usd1JOh1Wu",
+          "name": "Gmail account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        240,
+        160
+      ],
+      "id": "e780a07e-28a1-451d-86b3-028d90875c70",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblleqImv7DJ5pZ2B",
+          "mode": "list",
+          "cachedResultName": "Emails",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr/tblleqImv7DJ5pZ2B"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "body": "={{ $json.text }}",
+            "subject": "={{ $json.subject }}",
+            "messageId": "={{ $json.id }}",
+            "date": "={{ $json.date }}",
+            "Labels": "={{ $json.labelIds }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "isRead",
+              "displayName": "isRead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "isDraft",
+              "displayName": "isDraft",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "hasAttachment",
+              "displayName": "hasAttachment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Labels",
+              "displayName": "Labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacts",
+              "displayName": "Contacts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "name (from Contacts)",
+              "displayName": "name (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "email (from Contacts)",
+              "displayName": "email (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "role (from Contacts)",
+              "displayName": "role (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "attachments",
+              "displayName": "attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "processed",
+              "displayName": "processed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lastProcessed",
+              "displayName": "lastProcessed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Contacts 2",
+              "displayName": "Contacts 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        180
+      ],
+      "id": "4ffdd01f-1228-4016-b7cd-05dcfa637126",
+      "name": "log message",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "toRecipients",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        900,
+        180
+      ],
+      "id": "15a08aaa-0bec-4c58-8285-584959c2e6c1",
+      "name": "Split Out (to)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ccRecipients",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        900,
+        380
+      ],
+      "id": "e2582513-0a83-48d4-97db-b715a383769b",
+      "name": "Split Out (cc)"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4YziXOwAuzFJk3",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr/tbl4YziXOwAuzFJk3"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "email": "={{ $json.address || $json.emailAddress.address }}",
+            "emailMessages": "=[\"{{ $('log message').item.json.id }}\"]",
+            "role": "to"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "emailMessages",
+              "displayName": "emailMessages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date (from emailMessages)",
+              "displayName": "date (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "subject (from emailMessages)",
+              "displayName": "subject (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "body (from emailMessages)",
+              "displayName": "body (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "to",
+                  "value": "to"
+                },
+                {
+                  "name": "from",
+                  "value": "from"
+                },
+                {
+                  "name": "cc",
+                  "value": "cc"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        180
+      ],
+      "id": "6fdf826c-260e-47c2-b435-5b685b14ea77",
+      "name": "log contact (to)"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4YziXOwAuzFJk3",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/appjqfkaPsL4f0jpT/tbl4YziXOwAuzFJk3"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name  }}",
+            "email": "={{ $json.address || $json.emailAddress.address }}",
+            "emailMessages": "=[\"{{ $('log message').item.json.id }}\"]",
+            "role": "cc"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "emailMessages",
+              "displayName": "emailMessages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date (from emailMessages)",
+              "displayName": "date (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "subject (from emailMessages)",
+              "displayName": "subject (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "body (from emailMessages)",
+              "displayName": "body (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "to",
+                  "value": "to"
+                },
+                {
+                  "name": "from",
+                  "value": "from"
+                },
+                {
+                  "name": "cc",
+                  "value": "cc"
+                },
+                {
+                  "name": "bcc",
+                  "value": "bcc"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        380
+      ],
+      "id": "de36f1a9-3cba-4237-a65d-7975d2e435ee",
+      "name": "log contact (cc)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a73ece28-866e-4ea5-95b7-b33ba80a0445",
+              "name": "fromEmailAddress Name",
+              "value": "={{ $('Loop Over Items').item.json.from.value[0].name }}",
+              "type": "string"
+            },
+            {
+              "id": "89ae1c98-1025-44b6-a0b9-585d87b0279e",
+              "name": "fromEmailAddress",
+              "value": "={{ $('Loop Over Items').item.json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "3317bbc1-d14d-4992-af04-be2ba3f07ac6",
+              "name": "toRecipients",
+              "value": "={{ $('Loop Over Items').item.json.to.value }}",
+              "type": "array"
+            },
+            {
+              "id": "7576a5c4-4889-4b38-afa7-2349ae0421a7",
+              "name": "ccRecipients",
+              "value": "={{ $('Loop Over Items').item.json.cc.value }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        180
+      ],
+      "id": "a80a8397-a7e0-475f-a8da-0b7424412e45",
+      "name": "set contacts"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1320,
+        140
+      ],
+      "id": "4d41d386-98fa-4c60-a3bf-48f36960885c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {
+          "includeBinaries": true
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        140
+      ],
+      "id": "908ecb97-38f7-4291-be30-d284f5393b25",
+      "name": "aggregate and drop"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblpF9qkkGiMAES29",
+          "mode": "list",
+          "cachedResultName": "Attachments",
+          "cachedResultUrl": "https://airtable.com/appjqfkaPsL4f0jpT/tblpF9qkkGiMAES29"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "messageId": "=['{{ $('split the list and get attachments').item.json.id }}']",
+            "Attachment name": "={{ $json.name }}",
+            "URL": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "recordId"
+          ],
+          "schema": [
+            {
+              "id": "Attachment name",
+              "displayName": "Attachment name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "createdDate",
+              "displayName": "createdDate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3140,
+        120
+      ],
+      "id": "3f511553-9238-4389-943f-3117df0d525c",
+      "name": "add attachment"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "318145e5-2663-43d5-893d-41fa1935e41e",
+              "name": "log_message_fields",
+              "value": "={{ $('log message').item.json.fields }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1500,
+        140
+      ],
+      "id": "e43c7f54-4177-4fdf-b4aa-d27d5dfd0a1b",
+      "name": "set new logged message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0764eedb-bde1-4939-b876-ed6d034d1e6c",
+              "name": "log_message_fields",
+              "value": "={{ $json.data[0].log_message_fields }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1900,
+        140
+      ],
+      "id": "fbf76e0c-d7d6-4e66-a3f8-b2a65d0e0749",
+      "name": "set"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "88050106-c837-47b1-9ef5-9ba1d50439c2",
+              "leftValue": "={{$binary}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2300,
+        140
+      ],
+      "id": "e3aa55db-938c-4541-9215-843a39c90917",
+      "name": "if hasAttachment"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblleqImv7DJ5pZ2B",
+          "mode": "list",
+          "cachedResultName": "Emails",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr/tblleqImv7DJ5pZ2B"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "processed": true,
+            "messageId": "={{ $json.messageId }}"
+          },
+          "matchingColumns": [
+            "messageId"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Labels",
+              "displayName": "Labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "INBOX",
+                  "value": "INBOX"
+                },
+                {
+                  "name": "CATEGORY_PERSONAL",
+                  "value": "CATEGORY_PERSONAL"
+                },
+                {
+                  "name": "IMPORTANT",
+                  "value": "IMPORTANT"
+                },
+                {
+                  "name": "UNREAD",
+                  "value": "UNREAD"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contacts",
+              "displayName": "Contacts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "name (from Contacts)",
+              "displayName": "name (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "email (from Contacts)",
+              "displayName": "email (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "role (from Contacts)",
+              "displayName": "role (from Contacts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "attachments",
+              "displayName": "attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "processed",
+              "displayName": "processed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lastProcessed",
+              "displayName": "lastProcessed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "0c6f6e27-aebe-452b-a03a-9aa967701988",
+      "name": "mark processed"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "331ee15e-f238-4e91-83eb-ed608d477a3b",
+              "name": "messageId",
+              "value": "={{ $('split the list and get attachments').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3320,
+        120
+      ],
+      "id": "d59fe991-9e1a-42c9-b193-b16341bbe2d9",
+      "name": "set messageId"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6f094ecb-626d-4aa4-ae77-a5ed0021699a",
+              "name": "messageId",
+              "value": "={{ $json.messageId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "bd33bc6e-1a89-4b40-9bbd-7ff5e6906027",
+      "name": "set id's"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1e22a8d2-5696-45fd-a56b-535e503aeffc",
+              "name": "messageId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2560,
+        340
+      ],
+      "id": "250f81a6-7762-4d54-9c55-ab52362fdcac",
+      "name": "messageId"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "app09G5jPjBLUEAVr",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail)",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4YziXOwAuzFJk3",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr/tbl4YziXOwAuzFJk3"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "emailMessages": "=[\"{{ $('log message').item.json.id }}\"]",
+            "name": "={{ $json['fromEmailAddress Name'] }}",
+            "email": "={{ $json.fromEmailAddress }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "emailMessages",
+              "displayName": "emailMessages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date (from emailMessages)",
+              "displayName": "date (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "subject (from emailMessages)",
+              "displayName": "subject (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "body (from emailMessages)",
+              "displayName": "body (from emailMessages)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "to",
+                  "value": "to"
+                },
+                {
+                  "name": "from",
+                  "value": "from"
+                },
+                {
+                  "name": "cc",
+                  "value": "cc"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "6468f6e7-a06e-4f6b-a5f4-5b9bfd1f0346",
+      "name": "log contact (from)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node JavaScript\n// Ensure this Code node is set to \"Run Mode: Run Once For All Items\"\n// (or \"Run Once For Each Item\" if you are certain only one item passes through here at a time)\n\n// Get all input items. If \"Run Once For Each Item\", use $input.item() and remove the loop.\nconst items = $input.all();\nconst outputItems = [];\n\nfor (const item of items) {\n  const attachmentsDetails = [];\n\n  // Check if the current item has binary data and if there are any attachments\n  // The Gmail node (with download attachments) puts files directly into item.binary\n  if (item.binary && Object.keys(item.binary).length > 0) {\n    // Iterate over each attachment key in item.binary\n    // These keys are like 'data', 'data0', 'data1', or sometimes the filename\n    for (const attachmentKey in item.binary) {\n      if (item.binary.hasOwnProperty(attachmentKey)) {\n        const attachmentData = item.binary[attachmentKey]; // Object containing details of one attachment\n\n        // Construct an object with the desired information\n        const detail = {\n          attachment_id: attachmentKey, // The key in the item.binary object\n          filename: attachmentData.fileName,\n          file_extension: attachmentData.fileExtension, // e.g., 'pdf', 'png'\n          file_type: attachmentData.mimeType,         // e.g., 'application/pdf', 'image/png' (MIME type)\n          file_size: attachmentData.fileSize,         // File size in bytes (numeric)\n          // file_size_readable: (attachmentData.fileSize / 1024).toFixed(2) + ' KB' // Optional human-readable size\n        };\n        attachmentsDetails.push(detail);\n      }\n    }\n  }\n\n  // Add the list of attachment details to the current item's JSON data.\n  // If there were no attachments, this will add an empty array.\n  item.json.attachments = attachmentsDetails;\n  outputItems.push(item);\n}\n\n// Return all items, now modified to include the 'attachments' array in their JSON part\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        120
+      ],
+      "id": "38b3499f-dc58-48b2-9802-0dcd5bff0bf5",
+      "name": "Get attachment in lists"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node: Split attachments array into individual items\n// Mode: Run Once For All Items\n\n// This code expects each input item to potentially have:\n// - item.json: Contains an 'attachments' array and other parent data (e.g., email subject).\n// - item.json.attachments: An array where each element is an object describing an attachment\n//   (e.g., { attachment_id, filename, file_type, file_size, ... }).\n// - item.binary: An object where keys are the 'attachment_id' from the above objects,\n//   and values are the n8n binary data objects for those attachments.\n\nconst allInputItems = $input.all();\nconst newOutputItems = [];\n\nfor (const currentItem of allInputItems) {\n  // Check if the item has a non-empty 'attachments' array in its JSON property\n  if (currentItem.json && Array.isArray(currentItem.json.attachments) && currentItem.json.attachments.length > 0) {\n    \n    // Prepare parent JSON data to be copied to each new attachment item.\n    // This excludes the 'attachments' array itself.\n    const parentJsonFields = { ...currentItem.json };\n    delete parentJsonFields.attachments;\n\n    // Iterate over each attachment object in the 'attachments' array\n    for (const attachmentObject of currentItem.json.attachments) {\n      // Create the JSON for the new item.\n      // Start with a copy of the parent item's JSON fields (e.g., subject, messageId),\n      // then merge/overwrite with the attachment's specific details.\n      const newJson = {\n        ...parentJsonFields, // Fields from the original email/item\n        ...attachmentObject    // Fields specific to this attachment (filename, file_type, etc.)\n      };\n\n      // Prepare the binary data for the new item\n      const newBinary = {};\n      // 'attachment_id' is the key used to link the JSON description to the binary data\n      // in the original item (e.g., \"data0\", \"attachment_0\" from the Gmail node, or the value you created).\n      const attachmentId = attachmentObject.attachment_id; \n\n      // Check if the original item has binary data and if the specific attachment's binary exists\n      if (attachmentId && currentItem.binary && currentItem.binary.hasOwnProperty(attachmentId)) {\n        // Assign the attachment's binary data to a standard key, e.g., 'file'.\n        // This makes it easier for downstream nodes that expect a single binary property per item.\n        // The object currentItem.binary[attachmentId] already contains { fileName, mimeType, data, ... }\n        newBinary.file = currentItem.binary[attachmentId];\n      } else if (attachmentId) {\n        // Log a warning if binary data is expected but not found\n        const originalMessageId = parentJsonFields.id || parentJsonFields.messageId || 'N/A';\n        console.warn(`For item (original ID: ${originalMessageId}), binary data for attachment_id '${attachmentId}' was not found in original item.binary. The new item for this attachment will not have binary data.`);\n      } else {\n        const originalMessageId = parentJsonFields.id || parentJsonFields.messageId || 'N/A';\n        console.warn(`For item (original ID: ${originalMessageId}), an attachment object was found without an 'attachment_id'. Cannot retrieve its binary data. Attachment object: ${JSON.stringify(attachmentObject)}`);\n      }\n\n      // Create the new item (representing a single attachment) and add it to our list\n      newOutputItems.push({\n        json: newJson,\n        binary: newBinary\n      });\n    }\n  } else {\n    // This section handles items that don't have an 'attachments' array or have an empty one.\n    // Current behavior: Only items derived from attachments are outputted.\n    // If you want to pass through original items that had no attachments, you would uncomment:\n    // newOutputItems.push(currentItem);\n    let logMessage = \"Item will not be processed for attachment splitting: \";\n    if (!currentItem.json) {\n        logMessage += \"No JSON property found.\";\n    } else if (!Array.isArray(currentItem.json.attachments)) {\n        logMessage += \"JSON property 'attachments' is not an array.\";\n    } else if (currentItem.json.attachments.length === 0) {\n        logMessage += \"JSON property 'attachments' is an empty array.\";\n    }\n    const originalMessageId = currentItem.json ? (currentItem.json.id || currentItem.json.messageId || 'N/A') : 'N/A (no JSON)';\n    console.log(`${logMessage} (Original ID: ${originalMessageId})`);\n  }\n}\n\n// Return the list of new items. Each item now represents a single attachment.\nreturn newOutputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        120
+      ],
+      "id": "b189cb42-0d0a-42c2-940f-2a590f065d81",
+      "name": "split the list and get attachments"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=file",
+        "name": "={{ $binary.file.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1BiUXUD5h2YX3CQn5J0CZ3GN-WB0a0qVb",
+          "mode": "list",
+          "cachedResultName": "inbox manager agent folder",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1BiUXUD5h2YX3CQn5J0CZ3GN-WB0a0qVb"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2960,
+        120
+      ],
+      "id": "6211ad9a-d2bc-4b02-b969-e6a4a46ab73f",
+      "name": "Upload"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.log_message_fields.messageId }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2120,
+        140
+      ],
+      "id": "aff01e00-b4dc-4e6e-b6d8-1da375042260",
+      "name": "get email",
+      "webhookId": "db601225-a292-483d-888f-c86b05c5aecb"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\n**Get email and save it into airtable (database)**",
+        "height": 120,
+        "width": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f7f2d973-5ffa-449d-acc5-f8e3930ca9a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "**Split out and get email's from, to & cc**",
+        "height": 80,
+        "width": 170
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1140,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "23f06acc-73f8-4628-a4f0-7839dd0748dd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "**If email has attachment**",
+        "height": 80,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2280,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "ac5b4cd8-09ab-42c5-93a0-e252976318c0",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "set id's",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "log message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log message": {
+      "main": [
+        [
+          {
+            "node": "set contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out (to)": {
+      "main": [
+        [
+          {
+            "node": "log contact (to)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out (cc)": {
+      "main": [
+        [
+          {
+            "node": "log contact (cc)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log contact (to)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "log contact (cc)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "set contacts": {
+      "main": [
+        [
+          {
+            "node": "Split Out (to)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out (cc)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "log contact (from)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "set new logged message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate and drop": {
+      "main": [
+        [
+          {
+            "node": "set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add attachment": {
+      "main": [
+        [
+          {
+            "node": "set messageId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set new logged message": {
+      "main": [
+        [
+          {
+            "node": "aggregate and drop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set": {
+      "main": [
+        [
+          {
+            "node": "get email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if hasAttachment": {
+      "main": [
+        [
+          {
+            "node": "Get attachment in lists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "messageId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set messageId": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set id's": {
+      "main": [
+        [
+          {
+            "node": "mark processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "messageId": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log contact (from)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get attachment in lists": {
+      "main": [
+        [
+          {
+            "node": "split the list and get attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split the list and get attachments": {
+      "main": [
+        [
+          {
+            "node": "Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload": {
+      "main": [
+        [
+          {
+            "node": "add attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get email": {
+      "main": [
+        [
+          {
+            "node": "if hasAttachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

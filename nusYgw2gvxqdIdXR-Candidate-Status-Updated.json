@@ -1,0 +1,146 @@
+{
+  "name": "Candidate Status Updated",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/appw1MudPpHUFnJ7E/tbleDzsZZDc14pG6g/viwJNblentVAUxCTj?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appw1MudPpHUFnJ7E/tbleDzsZZDc14pG6g/viwJNblentVAUxCTj?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "lastModified (status)",
+        "additionalFields": {
+          "formula": "=AND(\n    {status} = \"screening\",\n    LAST_MODIFIED_TIME(status) > DATEADD(NOW(), -1, 'minutes')\n)"
+        }
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        620,
+        -140
+      ],
+      "id": "0f4e37ca-a5b0-4bbe-827f-121314e26868",
+      "name": "candidate status updated"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0f96b992-cad1-4b5e-98bd-cbcb3ede9aa7",
+              "name": "content.fullName",
+              "value": "={{ $json.fields.fullName }}",
+              "type": "string"
+            },
+            {
+              "id": "5350bcdb-43ec-4670-bde8-ccab7faa2794",
+              "name": "content.description",
+              "value": "={{ $json.fields.description }}",
+              "type": "string"
+            },
+            {
+              "id": "c989eed3-1e89-425c-bc99-326e4a668e85",
+              "name": "content.headline",
+              "value": "={{ $json.fields.headline }}",
+              "type": "string"
+            },
+            {
+              "id": "de894ebb-a3c6-4630-b46d-92783756a560",
+              "name": "content.status",
+              "value": "={{ $json.fields.status }}",
+              "type": "string"
+            },
+            {
+              "id": "aec1edd6-fb4a-43cb-8f9d-c05e94a5dea6",
+              "name": "content.email",
+              "value": "={{ $json.fields.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        840,
+        -140
+      ],
+      "id": "565172c9-c6ee-4a31-b699-fc5017cda7ff",
+      "name": "set content"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VkKW3Sak1WRucF4P",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 routingAgent (recruiting demo) copy"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1060,
+        -140
+      ],
+      "id": "8bfaecf7-6184-488d-a0e0-b4fdbdc1ec15",
+      "name": "routingAgent"
+    }
+  ],
+  "connections": {
+    "candidate status updated": {
+      "main": [
+        [
+          {
+            "node": "set content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set content": {
+      "main": [
+        [
+          {
+            "node": "routingAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

@@ -1,0 +1,240 @@
+{
+  "name": "▶️ New Calendar Event Created",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "value": "devin@customaistudio.io",
+          "mode": "list",
+          "cachedResultName": "devin@customaistudio.io"
+        },
+        "triggerOn": "eventCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        180
+      ],
+      "id": "41ff2aae-ee5c-4d94-9b04-eba62e825da9",
+      "name": "event created"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appuiymaRgMhwECy8",
+          "mode": "list",
+          "cachedResultName": "Sales Agent (demo)",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnQLOSwJO3bJbZG",
+          "mode": "list",
+          "cachedResultName": "meeting reminders",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8/tblnQLOSwJO3bJbZG"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "eventId": "={{ $json.id }}",
+            "attendees": "={{ $json.attendees.toJsonString() }}",
+            "description": "={{ $json.description }}",
+            "name": "={{ $json.summary }}",
+            "startDate": "={{ $json.startDate }}"
+          },
+          "matchingColumns": [
+            "eventId"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "attendees",
+              "displayName": "attendees",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "eventId",
+              "displayName": "eventId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "startDate",
+              "displayName": "startDate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        180
+      ],
+      "id": "0affb898-cc83-4535-9f0b-f3e70813b641",
+      "name": "create or update record"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3034b73-62fa-4eb4-8bf3-fa0d8bb2e4d2",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "efbfe6da-21f9-4600-80eb-e343ba791ecc",
+              "name": "summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "748f0dd2-c18e-4205-94b0-c2007565bda9",
+              "name": "attendees",
+              "value": "={{ $json.attendees }}",
+              "type": "array"
+            },
+            {
+              "id": "31499a51-046e-4961-b649-013ed97aa23d",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "6f32637b-bed2-4f78-a965-4e1491227c4a",
+              "name": "startDate",
+              "value": "={{ $json.start.dateTime }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        180
+      ],
+      "id": "0d4fd031-0338-40bf-ad73-b764eb709d66",
+      "name": "set values"
+    }
+  ],
+  "connections": {
+    "event created": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "create or update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

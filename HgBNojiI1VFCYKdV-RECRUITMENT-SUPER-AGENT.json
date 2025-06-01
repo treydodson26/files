@@ -1,0 +1,483 @@
+{
+  "name": "RECRUITMENT SUPER AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        -60
+      ],
+      "id": "f6705d87-a4b4-4249-a6f2-990b536b04ad",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# CONTENT\n\n{{ $json.content }}\n\n# CONTEXT (if any exists)\n\n{{ $json.context }}\n",
+        "options": {
+          "systemMessage": "={{ $json.prompt }}",
+          "maxIterations": 1,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        -80
+      ],
+      "id": "c27549bd-ce7f-4faf-85a8-ae9ddeb2486b",
+      "name": "RECRUITING",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o4-mini",
+          "mode": "list",
+          "cachedResultName": "o4-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        120
+      ],
+      "id": "c1dad860-39cc-4c3f-ade4-cd2eb587d904",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appHuUo6uOB5cuw0U",
+          "mode": "list",
+          "cachedResultName": "Recruitment Super Agent",
+          "cachedResultUrl": "https://airtable.com/appHuUo6uOB5cuw0U"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblZm1l8JcQqucrjz",
+          "mode": "list",
+          "cachedResultName": "playbook",
+          "cachedResultUrl": "https://airtable.com/appHuUo6uOB5cuw0U/tblZm1l8JcQqucrjz"
+        },
+        "id": "={{ $json.promptId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -60,
+        -60
+      ],
+      "id": "5af1d2ee-938e-4a13-91af-915e237a3af5",
+      "name": "get prompt",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VjAqQkjLUPCmxNtV",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — 🛠️Activity Log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1140,
+        -60
+      ],
+      "id": "afd5097c-7c56-4e48-9bfe-f8f661c80852",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e33077ea-a593-4b22-899c-420f9bac9bd3",
+              "name": "agent",
+              "value": "=RECRUITING AGENT",
+              "type": "string"
+            },
+            {
+              "id": "fa90819e-28a3-40d2-b81d-a603b8a5eecd",
+              "name": "output",
+              "value": "={{ $json.output }}{{ $json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "5091481b-a4de-41f0-ad8b-607d244cc780",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps ? $json.intermediateSteps.toJsonString() : \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        820,
+        -60
+      ],
+      "id": "48a29811-a2de-4548-be79-5c5ab07a1ed1",
+      "name": "set log details"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to respond back to the user in Slack.",
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U08QQ9J2JGY",
+          "mode": "list",
+          "cachedResultName": "trey"
+        },
+        "text": "={{ $fromAI('message') }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        500,
+        200
+      ],
+      "id": "611cdb74-053e-4fc3-84d4-48957e1b0b3f",
+      "name": "Send Message",
+      "webhookId": "a7a8a3ab-26ee-4b0c-80b1-a564d0717b83",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "9a7X8WokkPyEK6YX",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "profile_sourcing",
+        "description": "Call this tool to source linkedin profiles.",
+        "workflowId": {
+          "__rl": true,
+          "value": "MkWZAB1pEebvmBGO",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — 🛠️ Candidate Sourcing"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "remote_ok": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('remote_ok', ``, 'boolean') }}",
+            "role": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('role', ``, 'string') }}",
+            "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('location', ``, 'string') }}",
+            "min_experience": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('min_experience', ``, 'number') }}",
+            "count": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('count', ``, 'number') }}",
+            "required_skills": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('required_skills', ``, 'string') }}",
+            "preferred_companies": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('preferred_companies', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "min_experience",
+              "displayName": "min_experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "count",
+              "displayName": "count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "required_skills",
+              "displayName": "required_skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "preferred_companies",
+              "displayName": "preferred_companies",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "remote_ok",
+              "displayName": "remote_ok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        640,
+        200
+      ],
+      "id": "a4ded04e-bf94-4049-81de-2a2a46cf0d22",
+      "name": "profile sourcing"
+    },
+    {
+      "parameters": {
+        "name": "email_agent",
+        "description": "Call this tool to execute email actions like sending an email, drafting an email, marking an email as read, etc. This tool WILL NOT generate content. You MUST generate the content. This tool will ONLY execute your email actions. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "7rTZ6CgceZgePDpC",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 gmail agent (recruiting demo) copy"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "type": "objectValue",
+              "objectValue": "={{ $json.content }}"
+            },
+            {
+              "name": "context",
+              "type": "objectValue",
+              "objectValue": "={{ $json.context }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"action\"],\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"note\": \"Provide the action to perform, such as 'Create a draft' or 'Send an email'.\",\n      \"value\": \"Create a draft\"\n    },\n    \"parameters\": {\n      \"type\": \"object\",\n      \"note\": \"Provide the necessary details for the email action.\",\n      \"properties\": {\n        \"senderEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The email address of the sender.\",\n          \"value\": \"sender@example.com\"\n        },\n        \"recipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The recipient's email addresses, separated by commas if multiple.\",\n          \"value\": \"recipient1@example.com,recipient2@example.com\"\n        },\n        \"ccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"CC email addresses, separated by commas if multiple.\",\n          \"value\": \"cc@example.com\"\n        },\n        \"bccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"BCC email addresses, separated by commas if multiple.\",\n          \"value\": \"bcc@example.com\"\n        },\n        \"subject\": {\n          \"type\": \"string\",\n          \"note\": \"The subject of the email.\",\n          \"value\": \"Meeting Follow-Up\"\n        },\n        \"body\": {\n          \"type\": \"string\",\n          \"note\": \"The content of the email.\",\n          \"value\": \"Hi Team,\\n\\nThank you for attending the meeting. Here are the action items:\\n\\n1. Follow up on the project.\\n2. Schedule the next meeting.\\n\\nBest regards,\\nJohn\"\n        },\n        \"messageId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the message (useful for replying or forwarding).\",\n          \"value\": \"12345abcdef\"\n        },\n        \"labelId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the label to associate with the message.\",\n          \"value\": \"label_001\"\n        },\n        \"replyToSenderOnly\": {\n          \"type\": \"boolean\",\n          \"note\": \"Set to true if replying only to the sender.\",\n          \"value\": true\n        },\n        \"search\": {\n          \"type\": \"string\",\n          \"note\": \"A search query for finding messages.\",\n          \"value\": \"project updates\"\n        },\n        \"readStatus\": {\n          \"type\": \"string\",\n          \"note\": \"The read status of the email ('unread', 'read', or 'both').\",\n          \"value\": \"unread\"\n        },\n        \"receivedAfter\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received after this date (ISO 8601 format).\",\n          \"value\": \"2024-01-01T00:00:00Z\"\n        },\n        \"receivedBefore\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received before this date (ISO 8601 format).\",\n          \"value\": \"2024-12-31T23:59:59Z\"\n        },\n        \"senderName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the sender.\",\n          \"value\": \"John Doe\"\n        },\n        \"newLabelName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the new label to create.\",\n          \"value\": \"Important\"\n        },\n        \"threadId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the email thread.\",\n          \"value\": \"thread_001\"\n        },\n        \"draftId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the draft.\",\n          \"value\": \"draft_123\"\n        },\n        \"maxResults\": {\n          \"type\": \"integer\",\n          \"note\": \"The maximum number of messages to retrieve (limit: 50).\",\n          \"value\": 10,\n          \"maximum\": 50\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "id": "d0e7151a-40f9-4fb5-ab10-c838589993b1",
+      "name": "EMAIL AGENT",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cdf32776-baeb-45a6-b23e-da2f0daccd48",
+              "name": "content",
+              "value": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.content, null, 2) }}",
+              "type": "string"
+            },
+            {
+              "id": "a674ce23-0f6a-45c8-9cf2-b4ef2739cf3d",
+              "name": "context",
+              "value": "={{ $json.context }}null",
+              "type": "string"
+            },
+            {
+              "id": "6ea76d10-9ebc-4f53-bebb-e29cfcd1fc6c",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        -60
+      ],
+      "id": "1119839a-8fff-428e-bd24-d470950e3f8f",
+      "name": "set content, context, and prompt1"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RECRUITING": {
+      "main": [
+        [
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set log details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RECRUITING",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set content, context, and prompt1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set log details": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "RECRUITING",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "profile sourcing": {
+      "ai_tool": [
+        [
+          {
+            "node": "RECRUITING",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EMAIL AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "RECRUITING",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set content, context, and prompt1": {
+      "main": [
+        [
+          {
+            "node": "RECRUITING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

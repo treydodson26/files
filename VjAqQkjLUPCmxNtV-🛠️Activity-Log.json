@@ -1,0 +1,188 @@
+{
+  "name": "🛠️Activity Log",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        -40
+      ],
+      "id": "97d7987f-231d-4a85-a74b-a5310a0b3978",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.stringify($json.intermediateSteps, null, 2) }}null"
+            },
+            {
+              "content": "=Write the intermediate steps in plain english so I can understand the logs.\n\n# IMPORTANT\n\nONLY output the log steps in plain english. DO NOT output anything else.\n\nIF the input is 'null' simply output 'null'\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        320,
+        -40
+      ],
+      "id": "ecf3f66d-a949-4dff-b2c6-cc28775a9c16",
+      "name": "generate log",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "090a0ff8-9b93-4715-895d-8f37d93c8b5b",
+              "name": "readableLog",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "0cc7709a-9d08-4099-b2e3-4e0790ab12f5",
+              "name": "output",
+              "value": "={{ $('Workflow Input Trigger').item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "d21e1e95-8988-457b-9149-1dbf3df10fe9",
+              "name": "log",
+              "value": "={{ JSON.stringify($('Workflow Input Trigger').item.json.intermediateSteps, null, 2) }}",
+              "type": "string"
+            },
+            {
+              "id": "32fb1ea3-f15e-41de-8dcb-bf8b5c0dc400",
+              "name": "agent",
+              "value": "={{ $('Workflow Input Trigger').item.json.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        -40
+      ],
+      "id": "9089fcf9-b5da-4599-904e-37c66936f552",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "tableId": "activity_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "output",
+              "fieldValue": "={{ $json.output }}"
+            },
+            {
+              "fieldId": "log",
+              "fieldValue": "={{ $json.log }}"
+            },
+            {
+              "fieldId": "agent",
+              "fieldValue": "={{ $json.agent }}"
+            },
+            {
+              "fieldId": "readableLog",
+              "fieldValue": "={{ $json.readableLog }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -40
+      ],
+      "id": "cda82fce-4366-4786-8081-1b600af77740",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CsGcH8eEk2IBtoCS",
+          "name": "Supabase account 5"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "generate log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate log": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Workflow Input Trigger": [
+      {
+        "json": {
+          "agent": "RECRUITING AGENT",
+          "output": "Agent stopped due to max iterations.",
+          "intermediateSteps": "[{\"action\":{\"tool\":\"Send_Message\",\"toolInput\":{\"message\":\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\"},\"toolCallId\":\"call_kSO0NJ7kO73hiJA5HewfXRPr\",\"log\":\"Invoking \\\"Send_Message\\\" with {\\\"message\\\":\\\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\\\"}\\n\",\"messageLog\":[{\"lc\":1,\"type\":\"constructor\",\"id\":[\"langchain_core\",\"messages\",\"AIMessageChunk\"],\"kwargs\":{\"content\":\"\",\"additional_kwargs\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_kSO0NJ7kO73hiJA5HewfXRPr\",\"type\":\"function\",\"function\":{\"name\":\"Send_Message\",\"arguments\":\"{\\\"message\\\":\\\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\\\"}\"}}]},\"response_metadata\":{\"prompt\":0,\"completion\":0,\"usage\":{\"prompt_tokens\":869,\"completion_tokens\":118,\"total_tokens\":987,\"prompt_tokens_details\":{\"cached_tokens\":0,\"audio_tokens\":0},\"completion_tokens_details\":{\"reasoning_tokens\":64,\"audio_tokens\":0,\"accepted_prediction_tokens\":0,\"rejected_prediction_tokens\":0}},\"finish_reason\":\"tool_calls\",\"system_fingerprint\":null,\"model_name\":\"o4-mini-2025-04-16\"},\"tool_call_chunks\":[{\"name\":\"Send_Message\",\"args\":\"{\\\"message\\\":\\\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\\\"}\",\"id\":\"call_kSO0NJ7kO73hiJA5HewfXRPr\",\"index\":0,\"type\":\"tool_call_chunk\"}],\"id\":\"chatcmpl-BdPrLt9Zu6WIT6fhU7KXRgDpgTCx0\",\"usage_metadata\":{\"input_tokens\":869,\"output_tokens\":118,\"total_tokens\":987,\"input_token_details\":{\"audio\":0,\"cache_read\":0},\"output_token_details\":{\"audio\":0,\"reasoning\":64}},\"tool_calls\":[{\"name\":\"Send_Message\",\"args\":{\"message\":\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\"},\"id\":\"call_kSO0NJ7kO73hiJA5HewfXRPr\",\"type\":\"tool_call\"}],\"invalid_tool_calls\":[]}}]},\"observation\":\"[{\\\"ok\\\":true,\\\"channel\\\":\\\"D08QQ9J8CMN\\\",\\\"message\\\":{\\\"user\\\":\\\"U08QQ9J2JGY\\\",\\\"type\\\":\\\"message\\\",\\\"ts\\\":\\\"1748733897.694539\\\",\\\"bot_id\\\":\\\"B08USDDSRC5\\\",\\\"app_id\\\":\\\"A016X0AT6QL\\\",\\\"text\\\":\\\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\\\",\\\"team\\\":\\\"T07CVM7BP9P\\\",\\\"bot_profile\\\":{\\\"id\\\":\\\"B08USDDSRC5\\\",\\\"app_id\\\":\\\"A016X0AT6QL\\\",\\\"name\\\":\\\"n8n.cloud\\\",\\\"icons\\\":{\\\"image_36\\\":\\\"https://avatars.slack-edge.com/2020-09-14/1367579227572_66b01b9e837bfefc79ac_36.png\\\",\\\"image_48\\\":\\\"https://avatars.slack-edge.com/2020-09-14/1367579227572_66b01b9e837bfefc79ac_48.png\\\",\\\"image_72\\\":\\\"https://avatars.slack-edge.com/2020-09-14/1367579227572_66b01b9e837bfefc79ac_72.png\\\"},\\\"deleted\\\":false,\\\"updated\\\":1748730911,\\\"team_id\\\":\\\"T07CVM7BP9P\\\"},\\\"blocks\\\":[{\\\"type\\\":\\\"rich_text\\\",\\\"block_id\\\":\\\"IFUd\\\",\\\"elements\\\":[{\\\"type\\\":\\\"rich_text_section\\\",\\\"elements\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"Hi there! This is Mallory. It seems like your request was empty. How can I help you today? Please provide some details so I can assist.\\\"}]}]}]},\\\"message_timestamp\\\":\\\"1748733897.694539\\\"}]\"}]"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

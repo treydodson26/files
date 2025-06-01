@@ -1,0 +1,387 @@
+{
+  "name": "▶️ Candidate Status Updated",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appHuUo6uOB5cuw0U",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tbleDzsZZDc14pG6g",
+          "mode": "id"
+        },
+        "triggerField": "lastModified (status)",
+        "additionalFields": {
+          "formula": "=AND(\n    {status} = \"screening\",\n    LAST_MODIFIED_TIME(status) > DATEADD(NOW(), -1, 'minutes')\n)"
+        }
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "abff6b2b-6ac3-4b8e-938e-a679df83eace",
+      "name": "candidate status updated",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0f96b992-cad1-4b5e-98bd-cbcb3ede9aa7",
+              "name": "content.fullName",
+              "value": "={{ $json.fields.fullName }}",
+              "type": "string"
+            },
+            {
+              "id": "5350bcdb-43ec-4670-bde8-ccab7faa2794",
+              "name": "content.description",
+              "value": "={{ $json.fields.description }}",
+              "type": "string"
+            },
+            {
+              "id": "c989eed3-1e89-425c-bc99-326e4a668e85",
+              "name": "content.headline",
+              "value": "={{ $json.fields.headline }}",
+              "type": "string"
+            },
+            {
+              "id": "de894ebb-a3c6-4630-b46d-92783756a560",
+              "name": "content.status",
+              "value": "={{ $json.fields.status }}",
+              "type": "string"
+            },
+            {
+              "id": "aec1edd6-fb4a-43cb-8f9d-c05e94a5dea6",
+              "name": "content.email",
+              "value": "={{ $json.fields.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -40,
+        0
+      ],
+      "id": "2f3ce3d1-14f4-4fc3-b910-3b02deaed40b",
+      "name": "set content"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "FonrwpKwVkUN6B7p",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — 🤖ROUTING AGENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "250aa8a3-d244-416d-ab16-fe8be94d3ec1",
+      "name": "routingAgent"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        940
+      ],
+      "id": "e32f6784-8858-4889-a9fd-5849c5d69fe2",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30b89b4a-157e-412a-a162-ce795ebcde5c",
+              "name": "metadata.messageId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "0db48e35-714b-4739-a497-7e14d62b45a9",
+              "name": "metadata.threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "c8865eb7-c954-4f6d-ac70-1abfc5f65894",
+              "name": "metadata.labelIds",
+              "value": "={{ $json.labelIds }}",
+              "type": "array"
+            },
+            {
+              "id": "70f8bd79-9d6f-4f99-af0a-4a50eb44c610",
+              "name": "metadata.to",
+              "value": "={{ $json.headers.to }}",
+              "type": "string"
+            },
+            {
+              "id": "0d610df7-ab7e-45a5-9bc9-0b6ab67b815b",
+              "name": "metadata.subject",
+              "value": "={{ $json.headers.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "0e90d6ff-feae-45a8-8b7f-ff3a20f7720a",
+              "name": "metadata.date",
+              "value": "={{ $json.headers.date }}",
+              "type": "string"
+            },
+            {
+              "id": "7d956b44-fc3b-4f6b-9c8e-edd0e9cf5128",
+              "name": "metadata.from",
+              "value": "={{ $json.headers.from }}",
+              "type": "string"
+            },
+            {
+              "id": "6b00263a-3b74-4896-a9a8-52cc30bffed9",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "32e10805-0724-4734-b48c-58dd4d264e8b",
+              "name": "metadata.cc",
+              "value": "={{ $json.headers.cc }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        940
+      ],
+      "id": "a4e958c8-df06-4c78-863e-d32f1d5a7f16",
+      "name": "sent content & metadata"
+    },
+    {
+      "parameters": {
+        "tableId": "events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.content }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ $json.metadata }}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "email"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        680,
+        940
+      ],
+      "id": "fed830ec-a042-4c58-aa9d-e2ce9ca7f47b",
+      "name": "log event"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "21ea9dcf-48c3-4c10-bc04-d23939699f29",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c79a1c18-9390-49b2-8ef7-c40ff7748d2e",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "mallory@customaistudio.io",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        940
+      ],
+      "id": "3c6c7f40-3e69-41a8-93f5-4ea3111c61bb",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        940
+      ],
+      "id": "84aa2757-eb78-4c4f-be3a-0e355238103c",
+      "name": "Loop Over Items"
+    }
+  ],
+  "connections": {
+    "candidate status updated": {
+      "main": [
+        [
+          {
+            "node": "set content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set content": {
+      "main": [
+        [
+          {
+            "node": "routingAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sent content & metadata": {
+      "main": [
+        [
+          {
+            "node": "log event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "sent content & metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log event": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "name": "My workflow 114",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a533b633-ebc4-4f54-aa2c-5d969c12aa96",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        120,
+        40
+      ],
+      "id": "82f9c6fc-7bef-4655-89b6-4a60d2a70467",
+      "name": "Webhook",
+      "webhookId": "a533b633-ebc4-4f54-aa2c-5d969c12aa96"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Converts XBRL formatted financial data from SEC filings into structured JSON. Extracts financial statements, notes, and tagged data from XBRL documents. Returns normalized JSON with financial metrics, line items, and contextual information.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        400
+      ],
+      "id": "6f280936-83bf-4957-a635-efd701f1be0c",
+      "name": "XBRL-to-JSON Converter"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Performs full-text search across SEC filing content. Searches within document text for keywords, phrases, or specific disclosures. Supports pagination with 'from' and 'size' parameters. Returns relevant text excerpts with filing context.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "from",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "size",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        440
+      ],
+      "id": "30641a8a-24ea-49ef-80c6-b8ef65b4341c",
+      "name": "Full-Text Search API"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Searches SEC filings database using structured queries. Accepts JSON with query parameters to find specific filings by company name, ticker, filing type (10-K, 10-Q, 8-K), date ranges, CIK numbers, or other filing metadata. Returns filing metadata including URLs, filing dates, and document identifiers.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        460
+      ],
+      "id": "9ca1c9fa-c2a3-465a-b94f-9d1deb0916f4",
+      "name": "Filing Query API"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Downloads SEC filing documents and converts them to PDF format. Accepts filing URLs or document identifiers from the Filing Query API results. Can download full documents or specific sections. Returns downloadable PDF links or base64 encoded PDF content.",
+        "method": "POST",
+        "url": "https://api.sec-api.io",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "8d90216e5e14e7f461e379cd5508ee82500f009cebb9f69d61a9698150b63d3a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `{{Need Description}}`, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        440
+      ],
+      "id": "f642552e-a9ad-4542-8191-8e51c19dbfd0",
+      "name": "Filing Download & PDF Generator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        400
+      ],
+      "id": "6a3fa06e-d678-4d03-adc9-82512f1d357f",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.query }}",
+        "options": {
+          "systemMessage": "="
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        480,
+        80
+      ],
+      "id": "e5cee48d-c08c-4b41-8ad0-f4414146422f",
+      "name": "AI Agent1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XBRL-to-JSON Converter": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Full-Text Search API": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filing Query API": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filing Download & PDF Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,545 @@
+{
+  "name": "Customer Support Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        480
+      ],
+      "id": "200100a9-b37b-490f-9b2d-a3f0fd5ebc8d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "11df456d-b5fb-41f4-a23f-a6e88467f21c",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "ee2d5a71-6126-4744-9b82-0c4c3ce9e7e5",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "ff76b083-e8ae-4b25-99a5-7b42d2fc72b2",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "3d39019a-a401-43c3-be6d-83d2d504b3dd",
+              "name": "agent",
+              "value": "={{ $('Edit Fields').item.json.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        940,
+        260
+      ],
+      "id": "f60e5ca4-c5de-479e-888a-5f493819b0cd",
+      "name": "set output values"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "oPe2geSGUdd89p28",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant Agent — Customer Support Agent_Activity Log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1160,
+        260
+      ],
+      "id": "b9ce25b4-7ae2-46af-9235-74b69f06ca40",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# NEW TICKET\n\n{{ JSON.stringify($json.content, null, 2) }}\n\n# CONTEXT\n\n{{ JSON.stringify($json.context, null, 2) }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\n{{ $json.prompt }}\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        560,
+        260
+      ],
+      "id": "f0a2d111-0e32-4c08-bfa5-5f77487cf791",
+      "name": "customer support agent",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appvV6nOVtwKIZaVx",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appvV6nOVtwKIZaVx/tblYzLAsCDAuesxiz/viwfVlqdfEUhfFV7s?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "trigger",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        260
+      ],
+      "id": "04171569-4c55-4e69-baa8-64902a99e9a4",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appvV6nOVtwKIZaVx",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent (Community)",
+          "cachedResultUrl": "https://airtable.com/appvV6nOVtwKIZaVx"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbld1EUUZZmo2sVeE",
+          "mode": "list",
+          "cachedResultName": "playbook",
+          "cachedResultUrl": "https://airtable.com/appvV6nOVtwKIZaVx/tbld1EUUZZmo2sVeE"
+        },
+        "id": "recQNm4xRFBhG9ICZ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        260
+      ],
+      "id": "ddce3543-84dc-4f5f-ac21-a0fd39a260b6",
+      "name": "get prompt",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "390b687b-77ca-4843-a952-d478e2c67244",
+              "name": "prompt",
+              "value": "={{ $json.instructions }}",
+              "type": "string"
+            },
+            {
+              "id": "d5fc6dbd-b15c-4581-944b-028d5d2f1d96",
+              "name": "agent",
+              "value": "={{ $json.agent[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "d8093d49-ad33-4b18-a274-8fa622a35638",
+              "name": "content",
+              "value": "={{ $('Airtable Trigger').item.json.fields }}",
+              "type": "object"
+            },
+            {
+              "id": "51e5fcde-b166-426a-9925-c1417b6b19ab",
+              "name": "context.airtableId",
+              "value": "={{ $('Airtable Trigger').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        260
+      ],
+      "id": "9fdeeccd-aa47-4e7d-b19d-2bb5fd279629",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "id": "13926023-9a9f-4057-97eb-29352841e7d0",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        620,
+        500
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "7IHHjs17Bege7tPG",
+          "name": "Postgres account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "Use RAG to look up information in the knowledgebase.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        780,
+        500
+      ],
+      "id": "19f24467-5fc9-4e02-8560-5813b6566b76",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CsGcH8eEk2IBtoCS",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        740
+      ],
+      "id": "6aceb80c-8559-48b8-bcaf-f3937dde41d6",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Customer Support Agent AI",
+        "height": 80,
+        "width": 380,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -120,
+        -20
+      ],
+      "typeVersion": 1,
+      "id": "9f96cd2c-a4a8-436e-adac-b635deb61475",
+      "name": "Title"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\n\nThis workflow checks Airtable for new support tickets, enriches them with playbook instructions and context, then uses GPT-4o (with chat memory and a RAG knowledge base) to draft a reply. Finally, it logs each interaction.",
+        "height": 200,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "7065ddab-28b1-4ef8-80f9-638f14e06950",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "content": "Triggers on new Airtable ticket.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "1c4825c5-ffb4-46df-b2df-530e3b063fba",
+      "name": "Airtable Note"
+    },
+    {
+      "parameters": {
+        "content": "Gets playbook prompt.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "0635eeca-c79d-408c-a6ae-59f8d4602244",
+      "name": "Prompt Note"
+    },
+    {
+      "parameters": {
+        "content": "Chat memory in Postgres.",
+        "height": 80,
+        "width": 150,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        600,
+        660
+      ],
+      "typeVersion": 1,
+      "id": "841532e5-dee5-49ad-85b4-7f18b09ada7a",
+      "name": "Memory Note"
+    },
+    {
+      "parameters": {
+        "content": "RAG knowledge base tool.",
+        "height": 80,
+        "width": 150,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        900,
+        820
+      ],
+      "typeVersion": 1,
+      "id": "fccb644c-013a-4bbc-bc73-8c1e58a4a9fb",
+      "name": "Vector Note"
+    },
+    {
+      "parameters": {
+        "content": "Prepares result fields.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "4667ae50-27c6-4ebc-a887-8acd1bb7f926",
+      "name": "Set Note"
+    },
+    {
+      "parameters": {
+        "content": "Logs interaction in sub-workflow.",
+        "height": 80,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1160,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "c564f760-2a7c-45fa-a28a-ab88d9233424",
+      "name": "Log Note"
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "customer support agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set output values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer support agent": {
+      "main": [
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set output values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "customer support agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "customer support agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "customer support agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

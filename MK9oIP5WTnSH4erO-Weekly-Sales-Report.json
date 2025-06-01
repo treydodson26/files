@@ -1,0 +1,173 @@
+{
+  "name": "Weekly Sales Report",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyWeek",
+              "weekDay": "1",
+              "hour": 8,
+              "minute": 0,
+              "timezone": "UTC"
+            }
+          ]
+        }
+      },
+      "id": "scheduleTriggerNode",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM sales WHERE sale_date >= current_date - interval '7 days' AND sale_date < current_date;"
+      },
+      "id": "postgresNode",
+      "name": "Query Sales Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        500,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "DB_CREDENTIALS_PLACEHOLDER"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {},
+        "fileFormat": "csv",
+        "dataPropertyName": "data",
+        "binaryPropertyName": "dataBinary",
+        "delimiter": ",",
+        "quoteChar": "\"",
+        "includeHeaders": true,
+        "fields": []
+      },
+      "id": "csvNode",
+      "name": "Format Report (CSV)",
+      "type": "n8n-nodes-base.csvFile",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "reporter@company.com",
+        "toEmail": "sales@company.com",
+        "subject": "Weekly Sales Report",
+        "text": "Please find attached the weekly sales report.",
+        "attachments": [
+          {
+            "binaryPropertyName": "dataBinary",
+            "fileName": "Weekly_Sales_Report.csv"
+          }
+        ],
+        "options": {}
+      },
+      "id": "emailNode",
+      "name": "Send Sales Report Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_SMTP_CREDENTIAL_ID",
+          "name": "YOUR_SMTP_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "alert@company.com",
+        "toEmail": "admin@company.com",
+        "subject": "Weekly Sales Report - Failure Notification",
+        "text": "The weekly sales report workflow has failed. Please check the system for errors.",
+        "options": {}
+      },
+      "id": "emailErrorNode",
+      "name": "Send Failure Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        900,
+        450
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_SMTP_CREDENTIAL_ID",
+          "name": "YOUR_SMTP_CREDENTIAL_NAME"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "scheduleTriggerNode": {
+      "main": [
+        [
+          {
+            "node": "postgresNode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postgresNode": {
+      "main": [
+        [
+          {
+            "node": "csvNode",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "emailErrorNode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "csvNode": {
+      "main": [
+        [
+          {
+            "node": "emailNode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "emailNode": {
+      "main": []
+    },
+    "emailErrorNode": {
+      "main": []
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": null,
+  "triggerCount": 0,
+  "meta": null
+}

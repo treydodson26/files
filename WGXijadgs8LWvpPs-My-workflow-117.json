@@ -1,0 +1,731 @@
+{
+  "name": "My workflow 117",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -660,
+        160
+      ],
+      "id": "3d5d3725-625e-41cd-9551-a9be01087fa2",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n# TAKE THESE ACTION/S \n{{ JSON.stringify($json.query.action, null, 2) }}\n\n# PARAMETERS (if any)\n{{ JSON.stringify($json.query.parameters, null, 2) }}\n\n# IMPORTANT\n- IF the action is NOT 'search', 'delete', or 'download', ALWAYS use the 'fileId' or 'folderId' to search for the file so we can retrieve the Google Doc link. \n\n- IF you are asked to create a file, you must ALWAYS use the 'file id' of the file you just created in the 'search files' tools so you can output the Google Doc Link. \n",
+        "options": {
+          "systemMessage": "=Execute the actions by calling your tool/s.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -440,
+        160
+      ],
+      "id": "cb72bef1-d314-4a74-ae80-34651d01a78f",
+      "name": "G DRIVE AGENT",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        400
+      ],
+      "id": "09319359-79d1-4c7a-b8d7-8ba7958e0343",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "name": "={{ $json.query.parameters.fileName }}",
+        "options": {
+          "description": "={{ $json.query.parameters.description }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        400
+      ],
+      "id": "70db71ab-7813-40dc-a7fe-6eaab7811bb4",
+      "name": "copy file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "yRqoyk0eK7d76poc",
+          "name": "Google Drive account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create a new document / file. ",
+        "operation": "createFromText",
+        "content": "={{ $json.query.parameters.fileContent }}",
+        "name": "={{ $json.query.parameters.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX",
+          "mode": "list",
+          "cachedResultName": "AGENT FILES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX"
+        },
+        "options": {
+          "convertToGoogleDocument": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -260,
+        400
+      ],
+      "id": "9cf84856-5b58-4e01-b1c5-509797a01bcc",
+      "name": "create file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -140,
+        400
+      ],
+      "id": "83268b33-07c9-486e-aea3-54fe5ad006d3",
+      "name": "delete file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        400,
+        280
+      ],
+      "id": "2de8fd24-f855-4ae8-906a-65d2a6290960",
+      "name": "download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX",
+          "mode": "list",
+          "cachedResultName": "AGENT FILES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        300,
+        360
+      ],
+      "id": "0ddab9b0-1bc1-4192-9abc-b123f111ee1b",
+      "name": "move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "user",
+            "emailAddress": "={{ $json.query.parameters.email }}"
+          }
+        },
+        "options": {
+          "emailMessage": "={{ $json.query.parameters.message }}",
+          "sendNotificationEmail": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -320,
+        560
+      ],
+      "id": "3fe47f77-383c-4f0b-8eab-b82177882f21",
+      "name": "share file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.fileId }}",
+          "mode": "id"
+        },
+        "changeFileContent": true,
+        "inputDataFieldName": "={{ $json.query.parameters.fileName }}",
+        "newUpdatedFileName": "={{ $json.query.parameters.newFileName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -200,
+        560
+      ],
+      "id": "80045b7a-60f0-4714-8c21-2f0a0c7feed6",
+      "name": "update file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.query.parameters.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX",
+          "mode": "list",
+          "cachedResultName": "AGENT FILES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        560
+      ],
+      "id": "4c25bfaf-423e-49eb-8203-b3e010a115f0",
+      "name": "upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.query.parameters.newFolderName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX",
+          "mode": "list",
+          "cachedResultName": "AGENT FILES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1mqzRxbNn6wV6szKoj-PTlUuf73xr7lNX"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        160,
+        560
+      ],
+      "id": "ccd6867e-e90f-4259-95ca-ade3152df1d8",
+      "name": "create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "deleteFolder",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.folderId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        280,
+        560
+      ],
+      "id": "39d7db35-bb8e-41b9-ae6e-e062cbba0f8c",
+      "name": "delete folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.query.parameters.folderId }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "user",
+            "emailAddress": "={{ $json.query.parameters.email }}"
+          }
+        },
+        "options": {
+          "emailMessage": "={{ $json.query.parameters.message }}",
+          "sendNotificationEmail": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        220,
+        400
+      ],
+      "id": "fdbe78c4-64c9-4caf-9221-99645d379fbb",
+      "name": "share folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.query.parameters.searchQuery }}",
+        "filter": {},
+        "options": {
+          "fields": [
+            "name",
+            "webViewLink",
+            "id"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        40,
+        560
+      ],
+      "id": "9bae86ce-2dbf-4b97-86e3-6e070b45234a",
+      "name": "search",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94ac1977-3c60-4cad-bdb2-feab5d86f801",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c925fc0e-c7fd-4928-bc41-05aecf37ad72",
+      "name": "response"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "YljbPVrygYBQuVZs",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — ⚫️ activityLog (STUDIO)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        160
+      ],
+      "id": "7b849722-f404-42a2-9271-e916bf7fb2a3",
+      "name": "activityLog"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e33077ea-a593-4b22-899c-420f9bac9bd3",
+              "name": "agent",
+              "value": "=drive",
+              "type": "string"
+            },
+            {
+              "id": "fa90819e-28a3-40d2-b81d-a603b8a5eecd",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "5091481b-a4de-41f0-ad8b-607d244cc780",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "0809286c-27d6-48a2-b89c-41e993665aa0",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        160
+      ],
+      "id": "07923081-7ad0-421e-99d1-a84467b6165c",
+      "name": "set values"
+    }
+  ],
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "G DRIVE AGENT": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "copy file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "move file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "share file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upload file": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create folder": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete folder": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "share folder": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search": {
+      "ai_tool": [
+        [
+          {
+            "node": "G DRIVE AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

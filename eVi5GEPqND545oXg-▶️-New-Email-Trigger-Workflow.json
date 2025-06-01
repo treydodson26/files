@@ -1,0 +1,158 @@
+{
+  "name": "▶️ New Email Trigger Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ],
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        -100
+      ],
+      "id": "cb8640ee-9d86-4d5e-8e28-e052e4bed722",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appuiymaRgMhwECy8",
+          "mode": "list",
+          "cachedResultName": "Sales Agent (demo)",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLCeYjyxPODQRB3",
+          "mode": "list",
+          "cachedResultName": "playbook",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8/tblLCeYjyxPODQRB3"
+        },
+        "id": "recZcTr71Z8RyboZI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        -100
+      ],
+      "id": "1c82797c-34e1-4714-9adb-16faf2551770",
+      "name": "get prompt"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "272c7139-4ae1-4b27-aa7c-0b5632aeb6e9",
+              "name": "content.from",
+              "value": "={{ $('Gmail Trigger').item.json.headers.from }}",
+              "type": "string"
+            },
+            {
+              "id": "3a8fd2c0-4929-4017-bb17-0bb35a2aa7c1",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "b496bdf7-1171-40c6-9c94-069b67edd349",
+              "name": "context",
+              "value": "[\"null\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        -100
+      ],
+      "id": "64d8c197-fc49-423b-b0fa-c597039d7a3f",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "O31PEmnL7jJuxcku",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 SALES AGENT (demo) [sales]"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -100
+      ],
+      "id": "a2bc8fa2-8b2a-451e-b829-c61d1b25b186",
+      "name": "SALES AGENT (demo)"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

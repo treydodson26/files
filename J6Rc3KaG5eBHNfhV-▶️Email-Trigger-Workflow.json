@@ -1,0 +1,1091 @@
+{
+  "name": "▶️Email Trigger Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# NEW EMAIL\n\nSubject: {{ $json.fields.subject }}\nBody: \n{{ $json.fields.body }}\n---\n## Email DETAILS\n\nEmail Labels: {{ $json.fields.Labels }}\nEmail attachments:{{ $json.fields['attachment name'] }}\n& attachment urls: {{ $json.fields['attachment url'] }}\nDate: {{ $json.fields.date }}\n\n ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=ALWAYS use the google drive Tools to get the attachment if attachment name is given in email details by user.\n\nNote: To get attachments use the google drive tool to search the file name to get the file id and then use the file id & download tool to donwload and understand the attachment.\n\nBased on the email & attachments info, determine which prompt makes the most sense to run.\n\nSteps to follow:\n1. Get email and download the attachments and analyzise them.\n2. Based on the info determine which prompt makes the most sense to run.\n\n\n# PLAYBOOK\n\n{{ JSON.stringify($json.playbook, null, 2) }}\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "3ca2e5ee-011e-4378-b640-0a2a9ad1693f",
+      "name": "analyzer",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appADw0q9CwY5LBcF",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail) (Community)",
+          "cachedResultUrl": "https://airtable.com/appADw0q9CwY5LBcF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblv3BigO4ULWm5ls",
+          "mode": "list",
+          "cachedResultName": "Playbook",
+          "cachedResultUrl": "https://airtable.com/appADw0q9CwY5LBcF/tblv3BigO4ULWm5ls"
+        },
+        "filterByFormula": "{active}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1300,
+        160
+      ],
+      "id": "5406ad23-5b74-4fa1-af11-3fe114fd1b7d",
+      "name": "get playbook",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "040f95d4-7306-4a33-ab56-cd8948ff6adc",
+              "name": "playbook",
+              "value": "={{\n  $('Aggregate playbook').item.json.playbook.map(item => ({\n    id: item.id,\n    name: item.name,\n    description: item.description\n  }))\n}}",
+              "type": "array"
+            },
+            {
+              "id": "bd149a98-ed22-4c43-9d63-28833229f523",
+              "name": "fields",
+              "value": "={{ $('set email info').item.json.fields }}",
+              "type": "object"
+            },
+            {
+              "id": "c381383f-1d15-4b26-bfcc-be47e5e291b6",
+              "name": "analyzer_prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -480,
+        160
+      ],
+      "id": "a8bd1eca-c3c4-40d8-8df5-bc17fcd4bbf0",
+      "name": "set email data & playbook"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appADw0q9CwY5LBcF",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail) (Community)",
+          "cachedResultUrl": "https://airtable.com/appADw0q9CwY5LBcF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblv3BigO4ULWm5ls",
+          "mode": "list",
+          "cachedResultName": "Playbook",
+          "cachedResultUrl": "https://airtable.com/app09G5jPjBLUEAVr/tblv3BigO4ULWm5ls"
+        },
+        "id": "={{ $('analyzer').item.json.output.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        160
+      ],
+      "id": "1f4440dd-207a-4059-b992-a52f40b5adc4",
+      "name": "get prompt",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c891be1b-b3a8-4a62-bd2a-63188e163b70",
+              "name": "email.body",
+              "value": "={{ $('set email data & playbook').item.json.fields.body }}",
+              "type": "string"
+            },
+            {
+              "id": "a854e437-01c1-48f2-8a83-d8116a82d1df",
+              "name": "email.subject",
+              "value": "={{ $('set email data & playbook').item.json.fields.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "81dd20f4-7ada-409b-9b53-b675eca1ec0c",
+              "name": "email.date",
+              "value": "={{ $('set email data & playbook').item.json.fields.date }}",
+              "type": "string"
+            },
+            {
+              "id": "a4792741-298a-4d12-8da8-0362f61f86b4",
+              "name": "email.Labels",
+              "value": "={{ $('set email data & playbook').item.json.fields.Labels }}",
+              "type": "array"
+            },
+            {
+              "id": "5482d9ea-7239-48ad-9d2c-514bb468bdaf",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "a409ef47-65df-4d86-a9c9-752d44d808de",
+              "name": "messageId",
+              "value": "={{ $('set email data & playbook').item.json.fields.messageId }}",
+              "type": "string"
+            },
+            {
+              "id": "6aef5d23-be9e-4a3c-87e2-35b6c8dbb5ce",
+              "name": "email.attachment_name",
+              "value": "={{ $('set email data & playbook').item.json.fields['attachment name'] }}",
+              "type": "array"
+            },
+            {
+              "id": "ba050d56-15d3-45b3-8c68-ef002498b7b1",
+              "name": "email.attachment_url",
+              "value": "={{ $('set email data & playbook').item.json.fields['attachment url'] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        160
+      ],
+      "id": "71e3ef4e-a836-4328-93a2-bf75cea08362",
+      "name": "set email data & prompt"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "playbook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        160
+      ],
+      "id": "50671516-dcde-4637-a994-9fe5042ca065",
+      "name": "Aggregate playbook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ebe23697-c082-4900-8d5f-6dc417ba484d",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "a6d4d021-b1e8-43e0-b918-b7323e399057",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "75c42fc6-3c82-40fd-82dc-8d0da508805f",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "884b74f9-cc03-4c45-a7af-0a402b21cd1b",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "a6a210b3-7560-4b93-8fe0-5010b38888af",
+              "name": "agent",
+              "value": "={{ $json.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1100,
+        160
+      ],
+      "id": "e95528dc-231b-4516-aad2-ae1b1948af1c",
+      "name": "set playbook values"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        360
+      ],
+      "id": "c73ccc4b-ca0e-42e0-a7e5-20ffc59a85ce",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        480
+      ],
+      "id": "75a8cd43-69bc-40c0-a4e0-37d91c4c6a47",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"recordId\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"recordId\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        480
+      ],
+      "id": "c05ce834-3619-428b-88f1-31c380cf8108",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "817e93f2-56cd-42fa-a465-5dd095da3436",
+              "name": "fields",
+              "value": "={{ $json.fields }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1500,
+        160
+      ],
+      "id": "1a0bac3f-d43e-4f26-a301-92d37308755e",
+      "name": "set email info"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# NEW EMAIL\n\nSubject: {{ $json.email.subject }}\nBody: \n{{ $json.email.body }}\n---\n## Email DETAILS\n\nEmail Labels: {{ $json.email.Labels }}\nEmail attachments:{{ $json.email.attachment_name }}\nDate: {{ $json.email.date }}\nemail message id:{{ $json.messageId }}",
+        "options": {
+          "systemMessage": "=\n{{ $json.prompt }}\n\nSteps to follow:\n\n1. Assign the email\n2. Give the output to gmail sub-agent in the below format.\n\nformat: \" {count} : Label the {email} into {output} \"\n\n{email} = all the email details like message id, email, attachment info, etc. \n{output} = categorization output.\n{count} = number of times you use gmail sub-agent tool.\n\n3. Wait for the gmail sub-agent to respond.\n4. Respond to gmail sub-agent.\n5. Answer the question of gmail sub-agent and give him solution.\n5. Do not stop guiding gmail sub-agent until he has label the email.\n6. Repeat (step 3 to 5) FIVE or more TIMES and count everytime you use the tool.\n\nNote: gmail sub-agent can get,post,do,delete,update,everything. He just don't know that. You have to guide him and explain him the steps on how to use the tools, which tools to be used to get what. \n\nOnly output result when the you can't solve the error. first try telling him to solve the error by himself.\n\nYou are his big brother a guide.\n\nAlways use gmail sub-agent tool for more than 5 times. DO NOT STOP UNTIL you use the gmail sub-agent tool FIVE TIMES.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        900,
+        160
+      ],
+      "id": "6c2fa3c4-613f-46bb-9eeb-5a2c88a8f50d",
+      "name": "executer",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('set email data & playbook').item.json.fields.messageId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        400
+      ],
+      "id": "75759803-68c7-4925-8bd3-9595d5c522d1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('set email data & playbook').item.json.fields.messageId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        980,
+        380
+      ],
+      "id": "ae4133b5-2fce-4829-85eb-1aa13e1b05c0",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "content": "## get playbook\n- This will retrieve all of the 'active' prompts ",
+        "height": 100,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        20
+      ],
+      "id": "90d01e09-fd91-41db-8876-7dd24864e42e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## analyzer \n- This agent will analyze the email AND the playbook to determine which prompt to run based on the scenario.",
+        "height": 140,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -40
+      ],
+      "id": "b5dc6567-f7a4-47cd-84ac-c582410d185e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## executer\n- This agent executes the action via the instructions in the prompt. \n- It has access to the 'Outlook Agent' that will execute the actual actions in the inbox.",
+        "height": 140,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        680,
+        -40
+      ],
+      "id": "d14affa8-4774-46e6-a9b1-863d2ac4c962",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "xkKLz5yXsfEFYiwP",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — activity log (inbox)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        160
+      ],
+      "id": "171531d4-3056-41ea-92eb-d7351df7e7bd",
+      "name": "activity log (analyzer)"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "xkKLz5yXsfEFYiwP",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — activity log (inbox)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        160
+      ],
+      "id": "cacfe099-05d3-48cb-92ba-a0511269dfbb",
+      "name": "activity log (executer)"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appADw0q9CwY5LBcF",
+          "mode": "list",
+          "cachedResultName": "Inbox Manager SuperAgent (Gmail) (Community)",
+          "cachedResultUrl": "https://airtable.com/appADw0q9CwY5LBcF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblv3BigO4ULWm5ls",
+          "mode": "list",
+          "cachedResultName": "Playbook",
+          "cachedResultUrl": "https://airtable.com/appADw0q9CwY5LBcF/tblv3BigO4ULWm5ls"
+        },
+        "filterByFormula": "AND(   {active},   {agent} = \"analyzer\" )",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -700,
+        160
+      ],
+      "id": "62173487-f090-498e-b3db-f8f64f6cb258",
+      "name": "get analyzer prompt",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5176eb52-c0e0-4394-94aa-ad93ba603336",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "d68675ca-973c-4675-a3dd-4950667927a7",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "5c8eb1de-b00d-4986-a103-a882d25b6a80",
+              "name": "agent",
+              "value": "=executer",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        160
+      ],
+      "id": "05b44dde-f5f9-4bf8-9fc0-3f882bf01f5f",
+      "name": "set activity details"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5176eb52-c0e0-4394-94aa-ad93ba603336",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "d68675ca-973c-4675-a3dd-4950667927a7",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "5c8eb1de-b00d-4986-a103-a882d25b6a80",
+              "name": "agent",
+              "value": "=analyzer",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        160
+      ],
+      "id": "cad90830-716a-4b08-a156-77c624a1bf0d",
+      "name": "set activity details (analyzer)"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/app09G5jPjBLUEAVr/tblleqImv7DJ5pZ2B/viwHqzaBUHDUmyTs1?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/app09G5jPjBLUEAVr/tblleqImv7DJ5pZ2B/viwHqzaBUHDUmyTs1?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "lastProcessed",
+        "additionalFields": {
+          "viewId": ""
+        }
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1700,
+        160
+      ],
+      "id": "bb6450c8-7843-47bd-9b43-77c13430458b",
+      "name": "new email logged1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        400
+      ],
+      "id": "4c3b761a-49dc-42e3-b5c0-8927f9824e9e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "limit": 50,
+        "queryString": "={{ $fromAI(\"attachment_name\",\"attachment name of file\") }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "filter": {
+          "driveId": {
+            "__rl": true,
+            "value": "My Drive",
+            "mode": "list",
+            "cachedResultName": "My Drive",
+            "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1BiUXUD5h2YX3CQn5J0CZ3GN-WB0a0qVb",
+            "mode": "list",
+            "cachedResultName": "inbox manager agent folder",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1BiUXUD5h2YX3CQn5J0CZ3GN-WB0a0qVb"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -340,
+        380
+      ],
+      "id": "7d432c26-61b1-4923-982e-cc86db103288",
+      "name": "search file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"file_id\",\"id of attachment\" )}}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -220,
+        380
+      ],
+      "id": "97386312-1148-49b8-a826-76bed96fe064",
+      "name": "download attachment",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "krMmyVitPSGsZCNZ",
+          "name": "Google Drive account 17"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        380
+      ],
+      "id": "35f2cf38-ec08-4f41-848d-967debf7db0e",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "call this tool to perform all the gmail/email actions. Use this tool to use email.",
+        "workflowId": {
+          "__rl": true,
+          "value": "5Le0aOOrwvwkO198",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 gmail agent (inbox manager)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        380
+      ],
+      "id": "a089a7ce-5c57-4ad3-8c9a-cc7a8a239a4b",
+      "name": "gmail sub-agent"
+    }
+  ],
+  "connections": {
+    "analyzer": {
+      "main": [
+        [
+          {
+            "node": "set activity details (analyzer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get playbook": {
+      "main": [
+        [
+          {
+            "node": "set playbook values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set email data & playbook": {
+      "main": [
+        [
+          {
+            "node": "analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set email data & prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set email data & prompt": {
+      "main": [
+        [
+          {
+            "node": "executer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate playbook": {
+      "main": [
+        [
+          {
+            "node": "get analyzer prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set playbook values": {
+      "main": [
+        [
+          {
+            "node": "Aggregate playbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "analyzer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set email info": {
+      "main": [
+        [
+          {
+            "node": "get playbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "executer": {
+      "main": [
+        [
+          {
+            "node": "set activity details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "analyzer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "executer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "activity log (analyzer)": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get analyzer prompt": {
+      "main": [
+        [
+          {
+            "node": "set email data & playbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set activity details": {
+      "main": [
+        [
+          {
+            "node": "activity log (executer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set activity details (analyzer)": {
+      "main": [
+        [
+          {
+            "node": "activity log (analyzer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new email logged1": {
+      "main": [
+        [
+          {
+            "node": "set email info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search file": {
+      "ai_tool": [
+        [
+          {
+            "node": "analyzer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download attachment": {
+      "ai_tool": [
+        [
+          {
+            "node": "analyzer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "executer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gmail sub-agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "executer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "new email logged1": [
+      {
+        "json": {
+          "id": "rec1AU7aOjcsu2QGQ",
+          "createdTime": "2025-05-10T10:53:03.000Z",
+          "fields": {
+            "messageId": "196b8ead5cf66291",
+            "subject": "BCC & dobule attachments",
+            "body": "fasdfjaslkfjsalkfjaslkjflks\n-- \n*Regards,   *\n*Pratik Kadam*\n",
+            "Labels": [
+              "UNREAD",
+              "IMPORTANT",
+              "CATEGORY_PERSONAL",
+              "INBOX"
+            ],
+            "Contacts": [
+              "recjBqhVFiHvxiVDJ",
+              "recmKfPLkP20iB7KF",
+              "recaaiPpIrhJ3xaa4"
+            ],
+            "date": "2025-05-10T06:38:26.000Z",
+            "recordId": "rec1AU7aOjcsu2QGQ",
+            "attachments": [
+              "recvR3qQiq2qf0t9J",
+              "recUmZJZBqO9bpTPg"
+            ],
+            "processed": true,
+            "lastProcessed": "2025-05-10T10:53:11.000Z",
+            "role (from Contacts)": [
+              "to",
+              "cc"
+            ],
+            "email (from Contacts)": [
+              "pratikkadam025@gmail.com",
+              "pratik@customaistudio.io",
+              "pratikkadam2540@gmail.com"
+            ],
+            "name (from Contacts)": [
+              "Pratik",
+              null,
+              "Pratik kadam254"
+            ],
+            "attachment name": [
+              "SALES AGENT (demo).json",
+              "scrape linkedin.json"
+            ],
+            "attachment url": [
+              "https://drive.google.com/file/d/1g788EA2yeVd6OfURA7EGrdt4_budzVEz/view?usp=drivesdk",
+              "https://drive.google.com/file/d/1Qt1FfJqyzal5hP-AlbDR-Dykzg30aeKU/view?usp=drivesdk"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}

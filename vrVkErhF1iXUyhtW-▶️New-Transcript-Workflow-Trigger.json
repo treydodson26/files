@@ -1,0 +1,412 @@
+{
+  "name": "▶️New Transcript Workflow Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -280,
+        20
+      ],
+      "id": "5ca8399b-6b03-4b17-ae22-2a00bf168bd4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e3fbc15b-6d56-4d42-b442-da6b4365b956",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        20
+      ],
+      "id": "f700e79a-d4b8-4fa8-a756-59a769b2d508",
+      "name": "new sales meeting transcript",
+      "webhookId": "e3fbc15b-6d56-4d42-b442-da6b4365b956"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0].json.body.transcript;\nconst readable = true; // Adjust as needed\n\n// Function to convert milliseconds to readable timestamp\nconst formatTime = (milliseconds) => {\n  const date = new Date(milliseconds);\n  return date.toISOString().substr(11, 8); // HH:MM:SS\n};\n\n// Build readable output\nlet transcript = '';\n\nif (input && Array.isArray(input.speaker_blocks)) {\n  input.speaker_blocks.forEach(block => {\n    const speaker = block.speaker?.name || 'Unknown Speaker';\n    const startTime = formatTime(block.start_time);\n    const endTime = formatTime(block.end_time);\n    const text = block.words || '';\n\n    if (readable) {\n      transcript += `[${startTime} - ${endTime}] ${speaker}: ${text}\\n\\n`;\n    } else {\n      transcript += `${speaker}: ${text}\\n`;\n    }\n  });\n} else {\n  throw new Error('Invalid or missing transcript data');\n}\n\n// Return processed transcript\nreturn [\n  {\n    json: {\n      readableTranscript: transcript.trim()\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -900,
+        20
+      ],
+      "id": "8f1050dc-e12c-4539-b215-2555eb754cc4",
+      "name": "clean transcript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "328bd792-9a49-4f86-9bb1-4f773b22e1c2",
+              "name": "body.participants",
+              "value": "={{ $('new sales meeting transcript').item.json.body.participants }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        20
+      ],
+      "id": "9c9ceded-817c-42a8-9002-d26dd105f8a2",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.participants",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -540,
+        20
+      ],
+      "id": "0ccd9a36-c212-47e9-af0b-89b667925567",
+      "name": "split out participants"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a72a149-031c-40e5-b14d-623de3b2fe21",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "customaistudio.io",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0b3596b8-62f4-4fc8-b4e1-0295fcfd86bc",
+      "name": "if not 'customaistudio'"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "operation": "search",
+        "limit": 1,
+        "additionalFields": {
+          "properties": [
+            "firstname",
+            "lastname",
+            "email",
+            "hs_lead_status"
+          ],
+          "query": "={{ $json.email }}"
+        }
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        -900,
+        280
+      ],
+      "id": "49c23bfe-e138-4237-91d2-7ef3730373fb",
+      "name": "search contact"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "operation": "get",
+        "contactId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "additionalFields": {
+          "propertiesCollection": {
+            "propertiesValues": {
+              "properties": [
+                "about",
+                "company"
+              ],
+              "propertyMode": "valueOnly"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        280
+      ],
+      "id": "beab03c6-1fd6-409b-8f8e-dbad1d7a1a71",
+      "name": "get contact"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "AUF9Ps3FJea1MaxX",
+          "mode": "list",
+          "cachedResultName": "🟦 Demos — SALES AGENT (demo)"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        -100,
+        280
+      ],
+      "id": "fd29e656-2207-4d3c-9ea7-2ba992fe4b42",
+      "name": "SALES AGENT (demo)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c184d23c-06a9-4a1a-847d-ca64a82af664",
+              "name": "context.websiteSummary",
+              "value": "={{ $('get contact').item.json.properties.website_summary.value }}",
+              "type": "string"
+            },
+            {
+              "id": "aa6e0790-80d9-419c-a3f5-430554a59a70",
+              "name": "context.email",
+              "value": "={{ $('get contact').item.json.properties.email.value }}",
+              "type": "string"
+            },
+            {
+              "id": "54837730-d371-45e9-9aa5-12e34dd4426a",
+              "name": "context.calendly",
+              "value": "=Q: {{ $('get contact').item.json.properties.calendly_question_1.value }}\nA: {{ $('get contact').item.json.properties.calendly_answer_1.value }}",
+              "type": "string"
+            },
+            {
+              "id": "2a3fc5b7-5736-4a20-b14f-4d722480fddd",
+              "name": "context.about",
+              "value": "={{ $json.properties.about.value || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "55395517-07a1-47a8-9a02-eed397e5bd3b",
+              "name": "content",
+              "value": "={{ $('clean transcript').item.json.readableTranscript }}",
+              "type": "string"
+            },
+            {
+              "id": "6028efa2-4387-4c02-9ae6-6c7fee4d9db4",
+              "name": "context.fullName",
+              "value": "={{ $('get contact').item.json.properties.firstname.value }} {{ $('get contact').item.json.properties.lastname.value }}",
+              "type": "string"
+            },
+            {
+              "id": "27450781-45fe-41b2-ae4c-374944fd582e",
+              "name": "context.participants",
+              "value": "={{ $('set values').item.json.body.participants }}",
+              "type": "array"
+            },
+            {
+              "id": "846a6a0b-2cf4-4ea0-985e-07d823af1b02",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -360,
+        280
+      ],
+      "id": "0cf4105e-787b-4aa7-b978-ca0036fab553",
+      "name": "set prompt, content, & context"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appuiymaRgMhwECy8",
+          "mode": "list",
+          "cachedResultName": "Sales Agent (demo)",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLCeYjyxPODQRB3",
+          "mode": "list",
+          "cachedResultName": "prompts",
+          "cachedResultUrl": "https://airtable.com/appuiymaRgMhwECy8/tblLCeYjyxPODQRB3"
+        },
+        "id": "recXyUt14o9jTX3Ic",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -540,
+        280
+      ],
+      "id": "1442c1a7-9e1e-48e3-bf5d-e25152e27689",
+      "name": "get prompt"
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "if not 'customaistudio'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new sales meeting transcript": {
+      "main": [
+        [
+          {
+            "node": "clean transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clean transcript": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "split out participants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split out participants": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if not 'customaistudio'": {
+      "main": [
+        [
+          {
+            "node": "search contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search contact": {
+      "main": [
+        [
+          {
+            "node": "get contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get contact": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set prompt, content, & context": {
+      "main": [
+        [
+          {
+            "node": "SALES AGENT (demo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set prompt, content, & context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

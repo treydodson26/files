@@ -1,0 +1,627 @@
+{
+  "name": "▶️Gmail to Airtable Agent Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        160
+      ],
+      "id": "dee59dc9-d776-4492-86d2-7fd3b4aec508",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appeLFZWyPEiy1h7g",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYzLAsCDAuesxiz",
+          "mode": "list",
+          "cachedResultName": "ticketLog",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g/tblYzLAsCDAuesxiz"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "threadId": "={{ $json.threadId }}",
+            "labels": "={{ JSON.stringify($json.labelIds, null, 2) }}",
+            "text": "={{ $json.text }}",
+            "subject": "={{ $json.subject }}",
+            "date": "={{ $json.date }}",
+            "to": "={{ JSON.stringify($json.to, null, 2) }}",
+            "from": "={{ JSON.stringify($json.from, null, 2) }}",
+            "cc": "={{ JSON.stringify($json.cc, null, 2) }}",
+            "bcc": "={{ JSON.stringify($json.bcc, null, 2) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cc",
+              "displayName": "cc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "bcc",
+              "displayName": "bcc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agentCategory",
+              "displayName": "agentCategory",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "agentLabel",
+              "displayName": "agentLabel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "modifiedTrigger",
+              "displayName": "modifiedTrigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "trigger",
+              "displayName": "trigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        160
+      ],
+      "id": "ed8c5391-8456-44ee-8200-47c1d7c330a8",
+      "name": "log ticket"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c30ae59-9681-4761-988f-a85ada80cd9a",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "8414163e-9d2b-4740-8e36-8018f7b5826c",
+              "name": "threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "1c2d4d6c-6eb7-4d6c-b24a-94424e43c2ac",
+              "name": "labelIds",
+              "value": "={{ $json.labelIds }}",
+              "type": "array"
+            },
+            {
+              "id": "059e17b1-b5af-46d8-aab0-080e11c088bc",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "37f9834e-9340-4414-8f4a-20e97c12b217",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "0d028b48-9498-4f36-8f4a-37682c9cc083",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "54246c0d-c924-4054-90e2-0611584d0a6a",
+              "name": "to",
+              "value": "={{ $json.to.value }}",
+              "type": "array"
+            },
+            {
+              "id": "3a5beea1-53e6-47ac-8b97-1d063ca9c356",
+              "name": "from",
+              "value": "={{ $json.from.value }}",
+              "type": "array"
+            },
+            {
+              "id": "e36f438e-8503-4aff-a461-580aabf118f0",
+              "name": "cc",
+              "value": "={{ $json.cc.value }}",
+              "type": "array"
+            },
+            {
+              "id": "73292439-e073-41d5-bec6-3693a3e78d75",
+              "name": "bcc",
+              "value": "={{ $json.bcc.value }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        160
+      ],
+      "id": "d8f06f4d-4763-41cf-a42e-12a85eb14132",
+      "name": "set email data"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appeLFZWyPEiy1h7g",
+          "mode": "list",
+          "cachedResultName": "Customer Support SuperAgent",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbld1EUUZZmo2sVeE",
+          "mode": "list",
+          "cachedResultName": "playbook",
+          "cachedResultUrl": "https://airtable.com/appeLFZWyPEiy1h7g/tbld1EUUZZmo2sVeE"
+        },
+        "id": "recap7oOZRezTvhor",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        160
+      ],
+      "id": "cffd697f-69ab-4aa1-80bb-6dea74a18212",
+      "name": "get prompt"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fbf03906-7e92-41b4-9d98-0d55e291480c",
+              "name": "prompt",
+              "value": "={{ $json.instructions }}",
+              "type": "string"
+            },
+            {
+              "id": "6b6bd204-ffff-4089-a969-948a5cfa0d4f",
+              "name": "context.agent",
+              "value": "={{ $json.agent[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "05870e50-6e0c-44f2-83bd-789140345c09",
+              "name": "content",
+              "value": "={{ $('log ticket').item.json.fields }}",
+              "type": "object"
+            },
+            {
+              "id": "fb5d4825-9e01-487f-ba8a-9ed3da9aaa63",
+              "name": "context.recordId",
+              "value": "={{ $('log ticket').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        160
+      ],
+      "id": "27afc754-e723-4243-918c-0287137fa3d7",
+      "name": "set prompt, content, and context"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "iHnsgCXLNsXMD1qF",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — Customer Support SuperAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ $json.prompt }}",
+            "context": "={{ $json.context }}",
+            "content": "={{ $json.content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        160
+      ],
+      "id": "48dfed69-ab62-4bd0-9c80-2f56599fd255",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Gmail to Airtable & Agent Workflow",
+        "height": 80,
+        "width": 420,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "417a3cbb-b78c-4549-8b77-df73f279f08d",
+      "name": "Workflow Title"
+    },
+    {
+      "parameters": {
+        "content": "## Summary\nThis workflow automates email handling.\n1.  It triggers when a new Gmail message arrives.\n2.  Key email details are extracted and saved to an Airtable log.\n3.  It fetches pre-set instructions (a \"playbook\") from another Airtable.\n4.  Finally, it passes the email data and instructions to a sub-workflow for further action.",
+        "height": 260,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -440,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "e666c17a-8203-438f-a571-4fac892598bd",
+      "name": "Workflow Summary"
+    },
+    {
+      "parameters": {
+        "content": "Checks for new emails every minute.",
+        "height": 80,
+        "width": 150,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -20,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "ce6d42a9-6748-4e89-bf63-1e62372e6233",
+      "name": "Gmail Trigger Info"
+    },
+    {
+      "parameters": {
+        "content": "Formats email data for logging.",
+        "height": 80,
+        "width": 150,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        200,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "10c79108-8dc7-4d96-8424-1b055c6a95b1",
+      "name": "Set Email Data Info"
+    },
+    {
+      "parameters": {
+        "content": "Saves email details to Airtable.",
+        "height": 80,
+        "width": 160,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "57837251-0641-41b7-958e-7a804b11a650",
+      "name": "Log Ticket Info"
+    },
+    {
+      "parameters": {
+        "content": "Fetches instructions from Playbook.",
+        "height": 80,
+        "width": 150,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "9d96ac6a-c274-4e85-985d-245bf9c86d3b",
+      "name": "Get Prompt Info"
+    },
+    {
+      "parameters": {
+        "content": "Prepares data for sub-workflow.",
+        "height": 80,
+        "width": 150,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        860,
+        340
+      ],
+      "typeVersion": 1,
+      "id": "30991848-468c-4bbd-ae15-05a50424b77f",
+      "name": "Set Sub-workflow Data Info"
+    },
+    {
+      "parameters": {
+        "content": "Triggers Customer Support SuperAgent sub-workflow.",
+        "height": 100,
+        "width": 180,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1300,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "74f5fa3c-8c34-4579-802e-1efde2ab1be8",
+      "name": "Execute Workflow Info"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "set email data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set email data": {
+      "main": [
+        [
+          {
+            "node": "log ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log ticket": {
+      "main": [
+        [
+          {
+            "node": "get prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get prompt": {
+      "main": [
+        [
+          {
+            "node": "set prompt, content, and context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set prompt, content, and context": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

@@ -1,0 +1,438 @@
+{
+  "name": "🛠️Profile Sourcing",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        100
+      ],
+      "id": "b34bc317-e12c-4dc3-b8fe-5b702ff9d40e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.message.content.google_search_query }}"
+            },
+            {
+              "name": "topic",
+              "value": "general"
+            },
+            {
+              "name": "max_results",
+              "value": "20"
+            },
+            {
+              "name": "days",
+              "value": "365"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        100
+      ],
+      "id": "759714ac-dd7a-4bae-8cbd-a9f7fade8f4c",
+      "name": "tavily"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "=o3-mini-2025-01-31",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=**OBJECTIVE**\n\nYour objective is to analyze the user's input and generate a Google search query to find LinkedIn profiles that match the specified criteria. You will then construct a Google search URL using this query and output the number of results requested by the user. The search query should be in the format:\n\n```\nsite:linkedin.com/in/ (\"KEYWORDS\") (\"KEYWORDS\") (\"KEYWORDS\")\n```\n\nwhere \"KEYWORDS\" can include job titles, locations, occupations, company names, and other relevant terms.\n\n---\n\n**CONTEXT**\n\nYou are part of a process to assist users in finding LinkedIn profiles based on specific criteria. Users may be recruiters, hiring managers, or networking professionals seeking individuals with particular skills, experience, or backgrounds.\n\n**User Input:** You will receive a natural language prompt from the user describing the type of LinkedIn profiles they are interested in. This prompt may contain information about job titles, companies, locations, skills, or other relevant details, including the number of results they wish to retrieve.\n\n**Output Format:** You will use the extracted information to generate a search query and construct a Google search URL. You will also determine and output the number of results requested by the user, as well as the name of the spreadsheet where the results should be saved.\n\n**Key Components:**\n\n- **Job Title:** Specific job titles or roles the user is interested in.\n- **Location:** Geographic locations or regions relevant to the search.\n- **Company Name:** Specific companies or industries of interest.\n- **Skills/Expertise:** Particular skills, expertise, or experience levels.\n- **Number of Results:** The exact number of LinkedIn profiles requested by the user.\n\n---\n\n**INSTRUCTIONS**\n\n**Analyze User Input:**\n\n1. Parse the user's prompt to identify key information, including job titles, locations, company names, skills, and the number of results requested.\n2. Extract the most relevant keywords from the input to construct an effective search query.\n3. Determine the total number of LinkedIn profiles needed from the user's input.\n\n**Construct the Search Query:**\n\n1. Use the extracted keywords to form a search query in the format:\n\n    ```\n    site:linkedin.com/in/ (\"KEYWORDS\") (\"KEYWORDS\") (\"KEYWORDS\")\n    ```\n\n2. Ensure that the search query includes all relevant keywords identified in the user's input, without exceeding the recommended number of keywords for an optimal search.\n\n**Optimize the Query:**\n\n1. Prioritize keywords based on their relevance and specificity.\n2. Avoid including overly broad or generic terms that may yield irrelevant results.\n3. Consider the logical grouping of keywords to ensure the search query is coherent and targeted.\n\n**Handle Ambiguities:**\n\n1. If the user's input contains ambiguous terms, prioritize the most commonly used or relevant interpretation based on context.\n2. Use synonyms or related terms if necessary to improve search effectiveness.\n\n**Construct the Google Search URL:**\n\n1. **Encode the Search Query:**\n   - Replace spaces with `+`.\n   - Wrap each group of keywords in parentheses with `%22` to denote double quotes.\n   - Convert the query into a URL-friendly format.\n\n2. **Build the URL:**\n   - Use the base URL `https://www.google.com/search?q=`.\n   - Append the encoded search query.\n\n**Example URL Construction:**\n\nFor a search query `site:linkedin.com/in/ (\"Software Engineer\") (\"San Francisco\") (\"Google\")`, the URL would be:\n\n```\nhttps://www.google.com/search?q=site:linkedin.com/in/+%22Software+Engineer%22+%22San+Francisco%22+%22Google%22\n```\n\n**Output the Results:**\n\n1. Output the generated search query.\n2. Output the constructed Google search URL.\n3. Output the name of the spreadsheet where the results should be saved, using a format such as \"LinkedIn_Search_Results_<JobTitle>_<Location>\".\n4. Output the number of results requested by the user.\n\n---\n\n**OUTPUT REQUIREMENTS**\n\n- **Google Search Query:** A well-structured search query string formatted as:\n\n  ```\n  site:linkedin.com/in/ (\"KEYWORDS\") (\"KEYWORDS\") (\"KEYWORDS\")\n  ```\n\n- **Google Search URL:** The URL generated from the search query that can be used in a browser to display the search results.\n\n- **Spreadsheet Name:** The name of the spreadsheet where the search results should be stored, formatted as \"LinkedIn_Search_Results_<JobTitle>_<Location>\".\n\n- **Number of Results:** The total number of LinkedIn profiles requested by the user.\n\n---\n\n**EXAMPLES**\n\n**Example 1**\n\n- **User Input:**  \n  Find 100 software engineers in San Francisco with experience at Google.\n\n- **Actions:**\n\n  1. **Keyword Extraction:**\n     - Job Title: Software Engineer\n     - Location: San Francisco\n     - Company Name: Google\n     - Number of Results: 100\n\n  2. **Search Query:**\n     ```\n     site:linkedin.com/in/ (\"Software Engineer\") (\"San Francisco\") (\"Google\")\n     ```\n\n  3. **Google Search URL:**  \n     ```\n     https://www.google.com/search?q=site:linkedin.com/in/+%22Software+Engineer%22+%22San+Francisco%22+%22Google%22\n     ```\n\n  4. **Spreadsheet Name:**  \n     ```\n     LinkedIn_Search_Results_Software_Engineer_San_Francisco\n     ```\n\n**Example 2**\n\n- **User Input:**  \n  Look for 50 marketing managers in New York with expertise in digital marketing.\n\n- **Actions:**\n\n  1. **Keyword Extraction:**\n     - Job Title: Marketing Manager\n     - Location: New York\n     - Skills: Digital Marketing\n     - Number of Results: 50\n\n  2. **Search Query:**\n     ```\n     site:linkedin.com/in/ (\"Marketing Manager\") (\"New York\") (\"Digital Marketing\")\n     ```\n\n  3. **Google Search URL:**  \n     ```\n     https://www.google.com/search?q=site:linkedin.com/in/+%22Marketing+Manager%22+%22New+York%22+%22Digital+Marketing%22\n     ```\n\n  4. **Spreadsheet Name:**  \n     ```\n     LinkedIn_Search_Results_Marketing_Manager_New_York\n     ```\n\n**Example 3**\n\n- **User Input:**  \n  I need to find 30 product managers working at Amazon in Seattle.\n\n- **Actions:**\n\n  1. **Keyword Extraction:**\n     - Job Title: Product Manager\n     - Location: Seattle\n     - Company Name: Amazon\n     - Number of Results: 30\n\n  2. **Search Query:**\n     ```\n     site:linkedin.com/in/ (\"Product Manager\") (\"Seattle\") (\"Amazon\")\n     ```\n\n  3. **Google Search URL:**  \n     ```\n     https://www.google.com/search?q=site:linkedin.com/in/+%22Product+Manager%22+%22Seattle%22+%22Amazon%22\n     ```\n\n  4. **Spreadsheet Name:**  \n     ```\n     LinkedIn_Search_Results_Product_Manager_Seattle\n     ```",
+              "role": "system"
+            },
+            {
+              "content": "If the number of results is not specified, ALWAYS default to 100.",
+              "role": "system"
+            },
+            {
+              "content": "The parameters MUST ALWAYS be written as:\n\ngoogle_search_query\ngoogle_search_url\nspreadsheet_name\nnumber_of_results\n\nIF YOU CHANGE THE NAME OF THE PARAMETERS YOU WILL DESTROY OUR BUSINESS.\n",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "43b23970-3b4b-4098-a29a-dc59926fafdd",
+      "name": "generate search query",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        -520,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        100
+      ],
+      "id": "7b75d201-26a7-4609-b7db-5b6501c86296",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        100
+      ],
+      "id": "47efef4f-1196-4da0-9739-3e176ff02e86",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appw1MudPpHUFnJ7E",
+          "mode": "list",
+          "cachedResultName": "Recruiting STUDIO",
+          "cachedResultUrl": "https://airtable.com/appw1MudPpHUFnJ7E"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbleDzsZZDc14pG6g",
+          "mode": "list",
+          "cachedResultName": "candidates",
+          "cachedResultUrl": "https://airtable.com/appw1MudPpHUFnJ7E/tbleDzsZZDc14pG6g"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "linkedinURL": "={{ $json.url }}",
+            "firstName": "={{ $json.title.split(\" - \")[0].split(\" \")[0] }}",
+            "lastName": "={{ $json.title.split(\" - \")[0].split(\" \").slice(1).join(\" \") }}",
+            "headline": "={{ $json.title }}",
+            "description": "={{ $json.content }}",
+            "status": "new"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "fullName",
+              "displayName": "fullName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "firstName",
+              "displayName": "firstName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lastName",
+              "displayName": "lastName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "linkedinURL",
+              "displayName": "linkedinURL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "new",
+                  "value": "new"
+                },
+                {
+                  "name": "screening",
+                  "value": "screening"
+                },
+                {
+                  "name": "engaged",
+                  "value": "engaged"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "phoneNumber",
+              "displayName": "phoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "lastModified (status)",
+              "displayName": "lastModified (status)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "followUps",
+              "displayName": "followUps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lists",
+              "displayName": "lists",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        100
+      ],
+      "id": "a02a7291-7b47-4916-b3d0-0cce4e5b0222",
+      "name": "log candidates"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f16ed3d-5701-49df-b149-883074c91118",
+              "name": "response",
+              "value": "I have successfully sourced the candidates.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        300,
+        -100
+      ],
+      "id": "f56630f7-f329-4221-ae8b-a020c8d06b12",
+      "name": "response"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "generate search query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate search query": {
+      "main": [
+        [
+          {
+            "node": "tavily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tavily": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "log candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log candidates": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

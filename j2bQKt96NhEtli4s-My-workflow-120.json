@@ -1,0 +1,231 @@
+{
+  "name": "My workflow 120",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53153a69-8878-4ead-8438-447f4c1913ce",
+              "name": "output",
+              "value": "={{ $json.body.record.output }}",
+              "type": "string"
+            },
+            {
+              "id": "60eab99c-6cee-4fa1-a658-6524ff6f1adc",
+              "name": "logDetails",
+              "value": "={{ $json.body.record.log_details }}",
+              "type": "string"
+            },
+            {
+              "id": "1ecdd169-a77d-4cdf-8c7a-3e37eee2ca07",
+              "name": "agent",
+              "value": "={{ $json.body.record.agent }}",
+              "type": "string"
+            },
+            {
+              "id": "f5630179-0df5-4d30-9848-f49b0047e82a",
+              "name": "intermediateSteps",
+              "value": "={{ $json.body.record.intermediate_steps }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -60,
+        -60
+      ],
+      "id": "94cbe6d3-30b2-4a67-bd0b-8616518f6a76",
+      "name": "set log values"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appHuUo6uOB5cuw0U",
+          "mode": "list",
+          "cachedResultName": "Recruitment Super Agent",
+          "cachedResultUrl": "https://airtable.com/appHuUo6uOB5cuw0U"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblJeHv4pF1fSbpWL",
+          "mode": "list",
+          "cachedResultName": "activityLog",
+          "cachedResultUrl": "https://airtable.com/appw1MudPpHUFnJ7E/tblJeHv4pF1fSbpWL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "output": "={{ $json.output }}",
+            "logDetails": "={{ $json.logDetails }}",
+            "agent": "={{ $json.agent }}",
+            "intermediateSteps": "={{ $json.intermediateSteps }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logDetails",
+              "displayName": "logDetails",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent",
+              "displayName": "agent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "RECRUITING AGENT",
+                  "value": "RECRUITING AGENT"
+                },
+                {
+                  "name": "GMAIL AGENT",
+                  "value": "GMAIL AGENT"
+                },
+                {
+                  "name": "CALENDAR AGENT",
+                  "value": "CALENDAR AGENT"
+                },
+                {
+                  "name": "SLACK AGENT",
+                  "value": "SLACK AGENT"
+                },
+                {
+                  "name": "ROUTING AGENT",
+                  "value": "ROUTING AGENT"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "intermediateSteps",
+              "displayName": "intermediateSteps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        -60
+      ],
+      "id": "a8ae6836-c808-4aea-ba48-47a1e55e8840",
+      "name": "log to airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TdemCp3knxDaDZwr",
+          "name": "Airtable Personal Access Token account 12"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5cd3f7c8-75cb-4e51-b137-7703be050987",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        -60
+      ],
+      "id": "d896b45f-64a9-4d9c-a319-23d34acae728",
+      "name": "new activity",
+      "webhookId": "5cd3f7c8-75cb-4e51-b137-7703be050987"
+    }
+  ],
+  "connections": {
+    "set log values": {
+      "main": [
+        [
+          {
+            "node": "log to airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new activity": {
+      "main": [
+        [
+          {
+            "node": "set log values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

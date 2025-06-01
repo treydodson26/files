@@ -1,0 +1,105 @@
+{
+  "name": "🛠️TRIGGER for Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        40
+      ],
+      "id": "86434648-52e4-4fa1-8b11-c27ba76f5dd8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ee618eb6-de40-47a1-a532-86222a059c6f",
+              "name": "content",
+              "value": "execute candidate sourcing workflow.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        40
+      ],
+      "id": "67259f01-6c4d-476c-8aa4-026e1854e736",
+      "name": "set content"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "hNO3aqoixBHX7lV4",
+          "mode": "list",
+          "cachedResultName": "RECRUITMENT SUPER AGENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        40
+      ],
+      "id": "c2e8dc4c-916d-47e3-9b1a-eba56e907a32",
+      "name": "profile sourcing"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "set content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set content": {
+      "main": [
+        [
+          {
+            "node": "profile sourcing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

@@ -1,0 +1,257 @@
+{
+  "name": "📋 SALES SUPER AGENT_activity log",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9cd40d05-e472-4068-b760-94f6924571ab",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.stringify($json.intermediateSteps, null, 2) }}null"
+            },
+            {
+              "content": "=Write the intermediate steps in plain english so I can understand the logs.\n\n# IMPORTANT\n\nONLY output the log steps in plain english. DO NOT output anything else.\n\nIF the input is 'null' simply output 'null'\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        0
+      ],
+      "id": "e21ffba2-9356-4b6e-ae86-bb91f08291da",
+      "name": "generate log"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "090a0ff8-9b93-4715-895d-8f37d93c8b5b",
+              "name": "readableLog",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "0cc7709a-9d08-4099-b2e3-4e0790ab12f5",
+              "name": "output",
+              "value": "={{ $('Workflow Input Trigger').item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "d21e1e95-8988-457b-9149-1dbf3df10fe9",
+              "name": "log",
+              "value": "={{ JSON.stringify($('Workflow Input Trigger').item.json.intermediateSteps, null, 2) }}",
+              "type": "string"
+            },
+            {
+              "id": "32fb1ea3-f15e-41de-8dcb-bf8b5c0dc400",
+              "name": "agent",
+              "value": "={{ $('Workflow Input Trigger').item.json.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ],
+      "id": "2c8447a5-9256-4c9b-aac4-f0ca92fa2f0d",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appw1MudPpHUFnJ7E",
+          "mode": "list",
+          "cachedResultName": "Recruiting SuperAgent (demo)",
+          "cachedResultUrl": "https://airtable.com/appw1MudPpHUFnJ7E"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblJeHv4pF1fSbpWL",
+          "mode": "list",
+          "cachedResultName": "activityLog",
+          "cachedResultUrl": "https://airtable.com/appw1MudPpHUFnJ7E/tblJeHv4pF1fSbpWL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "output": "={{ $json.output }}",
+            "logDetails": "={{ $json.readableLog }}",
+            "intermediateSteps": "={{ $json.log }}",
+            "agent": "={{ $json.agent }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "recordId",
+              "displayName": "recordId",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logDetails",
+              "displayName": "logDetails",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent",
+              "displayName": "agent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "RECRUITING AGENT",
+                  "value": "RECRUITING AGENT"
+                },
+                {
+                  "name": "GMAIL AGENT",
+                  "value": "GMAIL AGENT"
+                },
+                {
+                  "name": "CALENDAR AGENT",
+                  "value": "CALENDAR AGENT"
+                },
+                {
+                  "name": "SLACK AGENT",
+                  "value": "SLACK AGENT"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "intermediateSteps",
+              "displayName": "intermediateSteps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        0
+      ],
+      "id": "141c46f5-074c-4a3d-a353-9d54489183ce",
+      "name": "activityLog"
+    }
+  ],
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "generate log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate log": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "activityLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

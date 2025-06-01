@@ -1,0 +1,600 @@
+{
+  "name": "Nate",
+  "nodes": [
+    {
+      "parameters": {
+        "name": "email_agent",
+        "description": "Call this tool to execute email actions like sending an email, drafting an email, marking an email as read, etc. This tool WILL NOT generate content. You MUST generate the content. This tool will ONLY execute your email actions. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "FDypE0rR0jgGm37J",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 gmail agent (mallory)"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify( $json.content, null, 2) }}"
+            },
+            {
+              "name": "context",
+              "stringValue": "={{ JSON.stringify( $json.context, null, 2) }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"action\"],\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"note\": \"Provide the action to perform, such as 'Create a draft' or 'Send an email'.\",\n      \"value\": \"Create a draft\"\n    },\n    \"parameters\": {\n      \"type\": \"object\",\n      \"note\": \"Provide the necessary details for the email action.\",\n      \"properties\": {\n        \"senderEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The email address of the sender.\",\n          \"value\": \"sender@example.com\"\n        },\n        \"recipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"The recipient's email addresses, separated by commas if multiple.\",\n          \"value\": \"recipient1@example.com,recipient2@example.com\"\n        },\n        \"ccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"CC email addresses, separated by commas if multiple.\",\n          \"value\": \"cc@example.com\"\n        },\n        \"bccRecipientEmailAddress\": {\n          \"type\": \"string\",\n          \"note\": \"BCC email addresses, separated by commas if multiple.\",\n          \"value\": \"bcc@example.com\"\n        },\n        \"subject\": {\n          \"type\": \"string\",\n          \"note\": \"The subject of the email.\",\n          \"value\": \"Meeting Follow-Up\"\n        },\n        \"body\": {\n          \"type\": \"string\",\n          \"note\": \"The content of the email.\",\n          \"value\": \"Hi Team,\\n\\nThank you for attending the meeting. Here are the action items:\\n\\n1. Follow up on the project.\\n2. Schedule the next meeting.\\n\\nBest regards,\\nJohn\"\n        },\n        \"messageId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the message (useful for replying or forwarding).\",\n          \"value\": \"12345abcdef\"\n        },\n        \"labelId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the label to associate with the message.\",\n          \"value\": \"label_001\"\n        },\n        \"replyToSenderOnly\": {\n          \"type\": \"boolean\",\n          \"note\": \"Set to true if replying only to the sender.\",\n          \"value\": true\n        },\n        \"search\": {\n          \"type\": \"string\",\n          \"note\": \"A search query for finding messages.\",\n          \"value\": \"project updates\"\n        },\n        \"readStatus\": {\n          \"type\": \"string\",\n          \"note\": \"The read status of the email ('unread', 'read', or 'both').\",\n          \"value\": \"unread\"\n        },\n        \"receivedAfter\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received after this date (ISO 8601 format).\",\n          \"value\": \"2024-01-01T00:00:00Z\"\n        },\n        \"receivedBefore\": {\n          \"type\": \"string\",\n          \"note\": \"Filter emails received before this date (ISO 8601 format).\",\n          \"value\": \"2024-12-31T23:59:59Z\"\n        },\n        \"senderName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the sender.\",\n          \"value\": \"John Doe\"\n        },\n        \"newLabelName\": {\n          \"type\": \"string\",\n          \"note\": \"The name of the new label to create.\",\n          \"value\": \"Important\"\n        },\n        \"threadId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the email thread.\",\n          \"value\": \"thread_001\"\n        },\n        \"draftId\": {\n          \"type\": \"string\",\n          \"note\": \"The ID of the draft.\",\n          \"value\": \"draft_123\"\n        },\n        \"maxResults\": {\n          \"type\": \"integer\",\n          \"note\": \"The maximum number of messages to retrieve (limit: 50).\",\n          \"value\": 10,\n          \"maximum\": 50\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "id": "77a6d4bb-8bad-4a3b-ac06-7b3a4f0728e4",
+      "name": "EMAIL AGENT",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Prompt\n\nThis Agent will receive the input data that could come from various sources like meeting transcripts, emails, slack messages, etc. and will ",
+        "height": 168
+      },
+      "id": "1aae3062-3982-4fba-b860-e4206019da6a",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Input Data Notes\n- Agent performs better when it knows the content type.\n",
+        "height": 100
+      },
+      "id": "0243e6b2-376f-448b-9219-ffb938909bfb",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "name": "calendar_agent",
+        "description": "Call this tool to execute 'Calendar Actions' such as creating an event, deleting an event, updating an event, and/or getting one or many events. This tool WILL NOT generate content. You MUST generate the content. This tool will ONLY execute your email actions. \n\nYou MUST provide the correct email address for the calendar. It will be a customaistudio.io email. By default, choose 'mallory@customaistudio.io'.\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "fahdnhpVThahzgi0",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 calendar agent (mallory)"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.content, null, 2) }}"
+            },
+            {
+              "name": "context",
+              "stringValue": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.context, null, 2) }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"action\"],\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"note\": \"Provide the action to perform, such as 'Create an event' or 'Update an event'.\",\n      \"value\": \"Create an event\"\n    },\n    \"parameters\": {\n      \"type\": \"object\",\n      \"note\": \"Provide the necessary details for the calendar action.\",\n      \"properties\": {\n        \"calendar\": {\n          \"type\": \"string\",\n          \"note\": \"The identifier of the calendar (e.g., email address).\",\n          \"value\": \"mallory@customaistudio.io\"\n        },\n        \"start\": {\n          \"type\": \"string\",\n          \"note\": \"Start date and time of the event in ISO 8601 format.\",\n          \"value\": \"2024-01-01T10:00:00Z\"\n        },\n        \"end\": {\n          \"type\": \"string\",\n          \"note\": \"End date and time of the event in ISO 8601 format.\",\n          \"value\": \"2024-01-01T11:00:00Z\"\n        },\n        \"allday\": {\n          \"type\": \"string\",\n          \"note\": \"Specify whether the event is all-day ('yes' or 'no').\",\n          \"value\": \"no\"\n        },\n        \"attendees\": {\n          \"type\": \"string\",\n          \"note\": \"Comma-separated list of attendees' email addresses.\",\n          \"value\": \"attendee1@example.com,attendee2@example.com\"\n        },\n        \"conferenceSolution\": {\n          \"type\": \"string\",\n          \"note\": \"The type of conference data (e.g., 'hangoutsMeet').\",\n          \"value\": \"hangoutsMeet\"\n        },\n        \"description\": {\n          \"type\": \"string\",\n          \"note\": \"The description or notes for the event.\",\n          \"value\": \"Discussion on Q1 planning and strategy.\"\n        },\n        \"repeatFrecuency\": {\n          \"type\": \"string\",\n          \"note\": \"Frequency of recurrence (must be 'daily', 'weekly', 'monthly', or 'yearly').\",\n          \"value\": \"weekly\",\n          \"enum\": [\"daily\", \"weekly\", \"monthly\", \"yearly\"]\n        },\n        \"summary\": {\n          \"type\": \"string\",\n          \"note\": \"Short description or title of the event.\",\n          \"value\": \"Q1 Planning Meeting\"\n        },\n        \"eventId\": {\n          \"type\": \"string\",\n          \"note\": \"The unique identifier for the event.\",\n          \"value\": \"event_123\"\n        },\n        \"sendUpdates\": {\n          \"type\": \"string\",\n          \"note\": \"Specifies whether to send updates to attendees (e.g., 'all', 'externalOnly', 'none').\",\n          \"value\": \"all\"\n        },\n        \"timeMin\": {\n          \"type\": \"string\",\n          \"note\": \"Minimum start time for retrieving events in ISO 8601 format.\",\n          \"value\": \"2024-01-01T00:00:00Z\"\n        },\n        \"timeMax\": {\n          \"type\": \"string\",\n          \"note\": \"Maximum end time for retrieving events in ISO 8601 format.\",\n          \"value\": \"2024-01-31T23:59:59Z\"\n        },\n        \"orderBy\": {\n          \"type\": \"string\",\n          \"note\": \"Specifies the ordering of returned events (e.g., 'startTime').\",\n          \"value\": \"startTime\"\n        },\n        \"query\": {\n          \"type\": \"string\",\n          \"note\": \"Search query to filter events.\",\n          \"value\": \"planning\"\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "id": "615e44a8-cd08-479f-a114-7ea8f66904c3",
+      "name": "CALENDAR AGENT",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "name": "slack_agent",
+        "description": "Call this tool to respond to the Slack message. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "tCCpa3aCkUYk5SFD",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 slack agent (mallory)"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.content, null, 2) }}"
+            },
+            {
+              "name": "context",
+              "stringValue": "={{ JSON.stringify($json.context, null, 2) }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        540,
+        220
+      ],
+      "id": "6445e42c-e8cb-4307-b36c-de9c9a05d612",
+      "name": "SLACK AGENT"
+    },
+    {
+      "parameters": {
+        "name": "agenticCRM",
+        "description": "Call this tool to retrieve contact information like names and email addresses.",
+        "workflowId": {
+          "__rl": true,
+          "value": "zHMHDTIpQ8gmoj4J",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — ⚫️ agenticCRM RAG"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.content, null, 2)}}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        220
+      ],
+      "id": "de4a4f2c-6c67-4810-be7e-a3d148542393",
+      "name": "agenticCRM"
+    },
+    {
+      "parameters": {
+        "name": "agenticDatabase",
+        "description": "Call this tool to retrieve information about past conversations and other data. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "UlTzQUmDB8sMvFhr",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — ⚫️ agenticDatabase RAG"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify($('When Executed by Another Workflow').item.json.content, null, 2) }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        220
+      ],
+      "id": "fb47f7c3-1bcc-4001-965c-2531d6020e83",
+      "name": "agenticDatabase"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When Executed by Another Workflow').item.json.context.sessionId }}",
+        "contextWindowLength": 0
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        220
+      ],
+      "id": "16a7cdea-022e-4160-86e4-96eea2e7f7c1",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        20,
+        220
+      ],
+      "id": "5727015c-2b10-4c7a-a141-e976431bbe73",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "name": "google_drive_agent",
+        "description": "Call this tool to execute Google Drive actions such as creating a file, copying a file, getting a file, creating a folder, searching a file or folder, etc.\n\n# IMPORTANT\n\n- You MUST indicate whether the operation is for a file or a folder. \n",
+        "workflowId": {
+          "__rl": true,
+          "value": "QKn6ozrn1CC5udJ5",
+          "mode": "list",
+          "cachedResultName": "i-Community Team — 🤖 google drive agent (mallory)"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "content",
+              "stringValue": "={{ JSON.stringify($json.content, null, 2) }}"
+            },
+            {
+              "name": "context",
+              "stringValue": "={{ JSON.stringify($json.context, null, 2) }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"action\"],\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"note\": \"The operation to perform on the file or folder, such as 'copy file', 'create file', 'delete folder', etc.\",\n      \"value\": \"copy file\"\n    },\n    \"parameters\": {\n      \"type\": \"object\",\n      \"note\": \"Details required for the file/folder operation.\",\n      \"properties\": {\n        \"fileId\": {\n          \"type\": \"string\",\n          \"note\": \"Identifier for the file.\",\n          \"value\": 12312312\n        },\n        \"fileName\": {\n          \"type\": \"string\",\n          \"note\": \"Name of the file.\",\n          \"value\": \"example_file_name\"\n        },\n        \"description\": {\n          \"type\": \"string\",\n          \"note\": \"Description for the file.\",\n          \"value\": \"example description\"\n        },\n        \"fileContent\": {\n          \"type\": \"string\",\n          \"note\": \"Content of the file.\",\n          \"value\": \"example content\"\n        },\n        \"email\": {\n          \"type\": \"string\",\n          \"note\": \"Email address associated with the operation.\",\n          \"value\": \"user@example.com\"\n        },\n        \"message\": {\n          \"type\": \"string\",\n          \"note\": \"Email message to the reciepient party when sharing a file or folder\",\n          \"value\": \"example message\"\n        },\n        \"searchQuery\": {\n          \"type\": \"string\",\n          \"note\": \"Query string used when searching for files or folders.\",\n          \"value\": \"example search query\"\n        },\n        \"newFolderName\": {\n          \"type\": \"string\",\n          \"note\": \"Name for a new folder to create.\",\n          \"value\": \"example new folder\"\n        },\n        \"newFileName\": {\n          \"type\": \"string\",\n          \"note\": \"Name for a new file to create.\",\n          \"value\": \"example new file\"\n        },\n        \"folderId\": {\n          \"type\": \"string\",\n          \"note\": \"Identifier for the folder.\",\n          \"value\": \"example_folder_id\"\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "id": "d5728935-cb6b-47eb-aaa9-4b41d934eb25",
+      "name": "G DRIVE AGENT",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e33077ea-a593-4b22-899c-420f9bac9bd3",
+              "name": "agent",
+              "value": "=mallory",
+              "type": "string"
+            },
+            {
+              "id": "fa90819e-28a3-40d2-b81d-a603b8a5eecd",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "5091481b-a4de-41f0-ad8b-607d244cc780",
+              "name": "intermediateSteps",
+              "value": "={{ $json.intermediateSteps }}",
+              "type": "array"
+            },
+            {
+              "id": "60fc5e20-07bd-47e4-a0ab-b72dd736fe15",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "b7f1e312-ea08-4e73-b828-223e09eebf5d",
+      "name": "set values"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to search the internet.",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer "
+            },
+            {
+              "name": "Content-type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        },
+        "optimizeResponse": true,
+        "responseType": "text"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        220
+      ],
+      "id": "f841156d-bed8-4d9a-b7fd-d30816004251",
+      "name": "tavily"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "content",
+              "type": "any"
+            },
+            {
+              "name": "context",
+              "type": "any"
+            },
+            {
+              "name": "prompt"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "58b96613-d24d-445e-a537-b8252f589d38",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "5tSj2EwMit1foWXG",
+          "mode": "list",
+          "cachedResultName": "i-Events — ⚫️ activityLog (STUDIO)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        0
+      ],
+      "id": "40d506ca-7814-4625-911f-4edc51ce5436",
+      "name": "activityLog (STUDIO)"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        220
+      ],
+      "id": "2ad7421c-d422-4c9a-92dc-ecbf306c2bcf",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## Content\n\n{{ JSON.stringify($json.content, null, 2) }}\n\n---\n\n## Context (if any exists)\n\n{{ JSON.stringify($json.context, null, 2) }}\n",
+        "options": {
+          "systemMessage": "={{ $json.prompt }}\n\n--\n# DATE & TIME NOW\n\nEnsure your actions are relevant to the current date & time if necessary. \n\n{{ $now }}\n--",
+          "maxIterations": 5,
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "f0135251-f939-4cf3-9228-efecbd71c113",
+      "name": "NATE_EXECUTIVE ASSISTANT",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        200,
+        0
+      ],
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "executeOnce": true,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "EMAIL AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CALENDAR AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SLACK AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agenticCRM": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agenticDatabase": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "G DRIVE AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set values": {
+      "main": [
+        [
+          {
+            "node": "activityLog (STUDIO)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "NATE_EXECUTIVE ASSISTANT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NATE_EXECUTIVE ASSISTANT": {
+      "main": [
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

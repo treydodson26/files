@@ -1,0 +1,259 @@
+{
+  "name": "▶️ Email Trigger to Supabase Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "351bbe6a-64b7-4c90-a50e-16bf1302c290",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qR9NYVUvyUjT6mFL",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30b89b4a-157e-412a-a162-ce795ebcde5c",
+              "name": "metadata.messageId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "0db48e35-714b-4739-a497-7e14d62b45a9",
+              "name": "metadata.threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "c8865eb7-c954-4f6d-ac70-1abfc5f65894",
+              "name": "metadata.labelIds",
+              "value": "={{ $json.labelIds }}",
+              "type": "array"
+            },
+            {
+              "id": "70f8bd79-9d6f-4f99-af0a-4a50eb44c610",
+              "name": "metadata.to",
+              "value": "={{ $json.headers.to }}",
+              "type": "string"
+            },
+            {
+              "id": "0d610df7-ab7e-45a5-9bc9-0b6ab67b815b",
+              "name": "metadata.subject",
+              "value": "={{ $json.headers.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "0e90d6ff-feae-45a8-8b7f-ff3a20f7720a",
+              "name": "metadata.date",
+              "value": "={{ $json.headers.date }}",
+              "type": "string"
+            },
+            {
+              "id": "7d956b44-fc3b-4f6b-9c8e-edd0e9cf5128",
+              "name": "metadata.from",
+              "value": "={{ $json.headers.from }}",
+              "type": "string"
+            },
+            {
+              "id": "6b00263a-3b74-4896-a9a8-52cc30bffed9",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "32e10805-0724-4734-b48c-58dd4d264e8b",
+              "name": "metadata.cc",
+              "value": "={{ $json.headers.cc }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        160
+      ],
+      "id": "6bcaa007-5d61-4b31-830e-be9d5d6f9e91",
+      "name": "sent content & metadata"
+    },
+    {
+      "parameters": {
+        "tableId": "events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.content }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ $json.metadata }}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "email"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        640,
+        160
+      ],
+      "id": "3bda95bf-18f5-4720-847d-440e2de00e24",
+      "name": "log event",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CsGcH8eEk2IBtoCS",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "21ea9dcf-48c3-4c10-bc04-d23939699f29",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c79a1c18-9390-49b2-8ef7-c40ff7748d2e",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "mallory@customaistudio.io",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        160
+      ],
+      "id": "b8e4b834-1071-41b8-9550-e20a461d4ae9",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -60,
+        160
+      ],
+      "id": "89a917c7-816b-42e7-9b7f-063f9a9ab25a",
+      "name": "Loop Over Items"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sent content & metadata": {
+      "main": [
+        [
+          {
+            "node": "log event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log event": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "sent content & metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

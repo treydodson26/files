@@ -1,0 +1,331 @@
+{
+  "name": "Agentic CRM_RAG",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        140
+      ],
+      "id": "5c53960a-cde0-4e89-bb50-1522cddcd7d1",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "model": "o3-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -920,
+        340
+      ],
+      "id": "a24840b3-8d7c-4943-b988-3cf52ddec1fd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        320
+      ],
+      "id": "ef513dbb-71d2-41be-a185-f5906128ea3d",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "o3-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        460
+      ],
+      "id": "1a6e8822-6005-4c2c-935f-d2b10812f28a",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QKJbufZJLSro13qy",
+          "name": "OpenAi account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"query\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"filters\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"field\": {\n                \"type\": \"string\"\n              },\n              \"operator\": {\n                \"type\": \"string\"\n              },\n              \"value\": {}\n            },\n            \"required\": [\"field\", \"operator\", \"value\"]\n          }\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        460
+      ],
+      "id": "bea67556-d532-4213-a38c-898e4e23f794",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\nYour task is to generate a filter formula for Supabase SQL. \n\n# FILTERING RULES \n- You can only filter using one of the following fields:  \n  1. `first_name`  \n  2. `last_name`  \n  3. `full_name`  \n  4. `email`  \n\n- Extract only the explicitly provided values.  \n- DO NOT generate or assume missing values. \n\n# OUTPUT REQUIREMENTS  \n\nReturn a JSON object formatted for execution in Supabase. \n\nExample 1: \nInput: `\"Mike Roads' email\"`  \n\nOutput:\n```\n{\n  \"filter\": {\n    \"field\": \"full_name\",\n    \"value\": \"Mike Roads\"\n  }\n}\n```\n\nExample 2:  \nInput: `\"Find all emails with 'Richey' as the last name\"`  \n\nOutput:\n```\n{\n  \"filter\": {\n    \"field\": \"last_name\",\n    \"value\": \"Richey\"\n  }\n}\n```\n\nExample 3:  \nInput: `\"What is the email of Zachary McKibbon?\"`  \n\nOutput:\n```\n{\n  \"filter\": {\n    \"field\": \"full_name\",\n    \"value\": \"Zachary McKibbon\"\n  }\n}\n```\n\n## Constraints:  \n- If no valid filter value is provided, return:  \n  ```\n  { \"error\": \"No valid filter value found.\" }\n  ```\n\n# NOTE\n\n- The response MUST be structured JSON, no additional text.\n- There might be times where you are given multiple names. \n\nFOR EXAMPLE: \n\nyou may recieve \"John, Susan Green, Pratik\". This would be three names, where two of them have a first name only, and one of them has both a first and last name. \n\nIn that scenerio, you MUST output each name as a separate filter value.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -780,
+        140
+      ],
+      "id": "76272c3b-c8b0-46f9-bfba-5d82d80801ca",
+      "name": "agenticCRM RAG AGENT"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49999928-0d61-425a-a784-cd047728f034",
+              "name": "contactInfo",
+              "value": "=first name: {{ $json.first_name }}\nlast name: {{ $json.last_name }}\nemail: {{ $json.email }}\ncompany name: {{ $json.company_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a24a6d40-dc1f-4219-a2f2-ae8fc55354d6",
+      "name": "set contact info"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "contactInfo",
+              "renameField": true,
+              "outputFieldName": "response"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        180,
+        0
+      ],
+      "id": "bb34355c-a378-4e8b-b832-157411d813b8",
+      "name": "response"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "contacts",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "={{ $json.field }}",
+              "condition": "eq",
+              "keyValue": "={{ $json.value }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ],
+      "id": "5c98938b-a9fd-4139-9019-c21d56b79be2",
+      "name": "get contact record/s",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CsGcH8eEk2IBtoCS",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.query.filters",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        140
+      ],
+      "id": "8df6182c-073e-43f0-8182-5b12f665338d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -200,
+        140
+      ],
+      "id": "dcb33753-a752-436e-bb61-63eb9a888efa",
+      "name": "Loop Over Items"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "agenticCRM RAG AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "agenticCRM RAG AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "agenticCRM RAG AGENT",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agenticCRM RAG AGENT": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set contact info": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get contact record/s": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "set contact info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get contact record/s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "AIRTABLE CREATION",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "56a3b75c-fcbd-455e-a95f-2c39b0f6db0a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.airtable.com/v0/meta/bases/apprgm9cSxxVL3hlM/tables",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer pat4UsLOgq2yQm5xG.d57d614e8e070eb81619462265be773f3de78c8bbe3376947613cf9b480db84d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"Node_Templates_Inventory\",\n  \"fields\": [\n    {\n      \"name\": \"Node_Type_Internal_Name\",\n      \"type\": \"singleLineText\",\n      \"description\": \"The internal n8n identifier for the node type (e.g., n8n-nodes-base.httpRequest).\"\n    },\n    {\n      \"name\": \"Node_Friendly_Name\",\n      \"type\": \"singleLineText\",\n      \"description\": \"A human-readable name for the node (e.g., HTTP Request).\"\n    },\n    {\n      \"name\": \"Node_Description\",\n      \"type\": \"multilineText\",\n      \"description\": \"A brief description of what the node does.\"\n    },\n    {\n      \"name\": \"Status\",\n      \"type\": \"singleSelect\",\n      \"description\": \"Status of the template (e.g., Draft, Active, Archived).\",\n      \"options\": {\n        \"choices\": [\n          { \"name\": \"Draft\", \"color\": \"blueLight2\" },\n          { \"name\": \"Active\", \"color\": \"greenLight2\" },\n          { \"name\": \"Archived\", \"color\": \"grayLight1\" }\n        ]\n      }\n    },\n    {\n      \"name\": \"Notes\",\n      \"type\": \"multilineText\",\n      \"description\": \"Internal notes about this node template.\"\n    },\n    {\n      \"name\": \"Param_1_Name\",\n      \"type\": \"singleLineText\",\n      \"description\": \"Internal name of the first key n8n parameter.\"\n    },\n    {\n      \"name\": \"Param_1_Default_Value\",\n      \"type\": \"multilineText\",\n      \"description\": \"Static default value for Parameter 1.\"\n    },\n    {\n      \"name\": \"Param_1_Expression_Template\",\n      \"type\": \"multilineText\",\n      \"description\": \"n8n expression template for Parameter 1.\"\n    },\n    {\n      \"name\": \"Param_2_Name\",\n      \"type\": \"singleLineText\",\n      \"description\": \"Internal name of the second key n8n parameter.\"\n    },\n    {\n      \"name\": \"Param_2_Default_Value\",\n      \"type\": \"multilineText\",\n      \"description\": \"Static default value for Parameter 2.\"\n    },\n    {\n      \"name\": \"Param_2_Expression_Template\",\n      \"type\": \"multilineText\",\n      \"description\": \"n8n expression template for Parameter 2.\"\n    },\n    {\n      \"name\": \"Param_3_Name\",\n      \"type\": \"singleLineText\",\n      \"description\": \"Internal name of the third key n8n parameter.\"\n    },\n    {\n      \"name\": \"Param_3_Default_Value\",\n      \"type\": \"multilineText\",\n      \"description\": \"Static default value for Parameter 3.\"\n    },\n    {\n      \"name\": \"Param_3_Expression_Template\",\n      \"type\": \"multilineText\",\n      \"description\": \"n8n expression template for Parameter 3.\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "c30214ee-418f-4995-8dc7-1f6a7b57608a",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}
